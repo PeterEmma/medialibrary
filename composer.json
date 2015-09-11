@@ -1,0 +1,29 @@
+{
+    "name": "cipemotion/medialibrary",
+    "description": "A Laravel media library.",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Alex Bouma",
+            "email": "me@alexbouma.me"
+        },
+        {
+            "name": "Joris van Willigen",
+            "email": "j-_is@hotmail.com"
+        }
+    ],
+    "require": {
+        "ramsey/uuid": "^2.8",
+        "illuminate/support": "^5.1",
+        "illuminate/database": "^5.1"
+    },
+    "autoload": {
+        "files": [
+            "src/helpers.php"
+        ],
+        "psr-4": {
+            "CipeMotion\\MediaLibrary\\": "src"
+        }
+    },
+    "minimum-stability": "stable"
+}

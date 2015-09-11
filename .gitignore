@@ -1,0 +1,15 @@
+# IDE
+/.idea
+/_ide_helper.php
+
+# OSX Crap
+.DS_Store
+
+# PHP Composer
+/vendor
+composer.lock
+composer.phar
+
+# Environment config
+.env
+.env.gen
