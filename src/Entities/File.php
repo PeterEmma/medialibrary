@@ -23,14 +23,16 @@ class File extends Model
     {
         parent::boot();
 
+        // Assign a UUID to each file
         self::creating(function (File $file) {
             $file->id = Uuid::uuid4();
         });
     }
 
+    // Catch any attachment relations
     public function __call($method, $parameters)
     {
-        $relations = config('medialibrary.relations');
+        $relations = config('medialibary.relations.attachment');
 
         if (in_array($method, $relations)) {
             return $this->morphedByMany($relations[$method], 'attachable');
@@ -67,13 +69,17 @@ class File extends Model
     }
 
     // Relations
-    public function attachables()
+    public function owner()
     {
-        return $this->morphTo();
+        return $this->belongsTo(config('medialibary.relations.owner'));
     }
     public function category()
     {
         return $this->belongsTo(Category::class);
+    }
+    public function attachables()
+    {
+        return $this->morphTo();
     }
 
     // Helpers

@@ -19,19 +19,27 @@ class CreateMedialibraryFilesTable extends Migration
             $table->primary('id');
 
             // Foreign keys
-            $table->integer('tenant_id')->unsigned();
-            $table->foreign('tenant_id')
-                  ->references('id')
-                  ->on('tenants')
+            /** @var \Illuminate\Database\Eloquent\Model $owner */
+            $owner = new config('medialibrary.relations.owner');
+
+            $table->integer('owner_id')->unsigned();
+            $table->foreign('owner_id')
+                  ->references($owner->getKeyName())
+                  ->on($owner->getTable())
                   ->onUpdate('CASCADE')
                   ->onDelete('CASCADE');
 
-            $table->integer('user_id')->unsigned()->nullable();
-            $table->foreign('user_id')
-                  ->references('id')
-                  ->on('users')
-                  ->onUpdate('CASCADE')
-                  ->onDelete('SET NULL');
+            if (!is_null(config('medialibrary.relations.user'))) {
+                /** @var \Illuminate\Database\Eloquent\Model $user */
+                $user = new config('medialibrary.relations.user');
+
+                $table->integer('user_id')->unsigned()->nullable();
+                $table->foreign('user_id')
+                      ->references($user->getKeyName())
+                      ->on($user->getTable())
+                      ->onUpdate('CASCADE')
+                      ->onDelete('SET NULL');
+            }
 
             $table->integer('category_id')->unsigned()->nullable();
             $table->foreign('category_id')

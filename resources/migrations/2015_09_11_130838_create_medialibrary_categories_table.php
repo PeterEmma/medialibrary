@@ -18,10 +18,13 @@ class CreateMedialibraryCategoriesTable extends Migration
             $table->increments('id');
 
             // Foreign key
-            $table->integer('tenant_id')->unsigned();
-            $table->foreign('tenant_id')
-                  ->references('id')
-                  ->on('tenants')
+            /** @var \Illuminate\Database\Eloquent\Model $owner */
+            $owner = new config('medialibrary.relations.owner');
+
+            $table->integer('owner_id')->unsigned();
+            $table->foreign('owner_id')
+                  ->references($owner->getKeyName())
+                  ->on($owner->getTable())
                   ->onUpdate('CASCADE')
                   ->onDelete('CASCADE');
 

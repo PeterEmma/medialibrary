@@ -4,14 +4,20 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Attachement Relations
+    | Relations
     |--------------------------------------------------------------------------
-    |
-    |  {function name} => {relations class}
-    |
     */
 
-    'relations'   => [
+    'relations' => [
+
+        'owner'      => 'App\Models\Tenant',
+        'user'       => 'App\Models\User', // or null
+
+        'attachment' => [
+
+            //'post' => 'App\Models\Post',
+
+        ],
 
     ],
 

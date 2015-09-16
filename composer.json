@@ -22,7 +22,7 @@
             "src/helpers.php"
         ],
         "psr-4": {
-            "CipeMotion\\MediaLibrary\\": "src"
+            "CipeMotion\\Medialibrary\\": "src"
         }
     },
     "minimum-stability": "stable"
