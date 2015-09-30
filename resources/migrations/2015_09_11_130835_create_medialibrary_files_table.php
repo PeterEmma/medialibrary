@@ -54,11 +54,12 @@ class CreateMedialibraryFilesTable extends Migration
 
             // Metadata
             $table->timestamps();
-            $table->smallInteger('width');
-            $table->smallInteger('height');
+            $table->smallInteger('width')->nullable();
+            $table->smallInteger('height')->nullable();
             $table->text('properties')->nullable();
 
             // Properties
+            $table->string('type');
             $table->string('disk');
             $table->string('filename');
             $table->string('extension');

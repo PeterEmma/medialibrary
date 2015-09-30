@@ -2,6 +2,8 @@
 
 namespace CipeMotion\Medialibrary;
 
+use CipeMotion\Medialibrary\Entities\File;
+use CipeMotion\Medialibrary\Observers\FileObserver;
 use Illuminate\Support\ServiceProvider as LaravelServiceProvider;
 
 class ServiceProvider extends LaravelServiceProvider
@@ -24,6 +26,8 @@ class ServiceProvider extends LaravelServiceProvider
         $this->publishes([
             __DIR__ . '/../resources/migrations/' => database_path('migrations')
         ], 'migrations');
+
+        $this->attachObservers();
     }
 
     /**
@@ -34,5 +38,13 @@ class ServiceProvider extends LaravelServiceProvider
     public function register()
     {
         $this->mergeConfigFrom(__DIR__ . '/../resources/config/medialibrary.php', 'medialibrary');
+    }
+
+    /**
+     * Attach model observers.
+     */
+    protected function attachObservers()
+    {
+        File::observe(new FileObserver);
     }
 }

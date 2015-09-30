@@ -19,3 +19,19 @@ if (!function_exists('filesize_to_human')) {
     }
 
 }
+
+if (!function_exists('get_temp_path')) {
+
+    /**
+     * Get a temporary file path, deleted after the requests finishes.
+     *
+     * @param string $name
+     *
+     * @return string
+     */
+    function get_temp_path($name = 'medialibrary')
+    {
+        return tempnam(sys_get_temp_dir(), $name);
+    }
+
+}

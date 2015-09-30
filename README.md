@@ -33,7 +33,7 @@ On your owner model add:
 ```
 public function files()
 {
-    return $this->hasMany(\CipeMotion\Medialibrary\Entities\File::class);
+    return $this->hasMany(\CipeMotion\Medialibrary\Entities\File::class, 'owner_id');
 }
 ```
 
