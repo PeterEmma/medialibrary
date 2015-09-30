@@ -26,7 +26,7 @@ class FileObserver
         $transformers = config("medialibrary.file_types.{$file->type}.transformations");
 
         foreach ($transformers as $name => $transformer) {
-            $queue = array_get($transformer, 'queue');
+            $queue = array_get($transformer, 'queued');
 
             if ($queue === false) {
                 $job = new TransformFileUnqueuedJob(
