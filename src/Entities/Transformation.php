@@ -19,7 +19,7 @@ class Transformation extends Model
      * @var array
      */
     protected $fillable = [
-
+        'name'
     ];
 
     /**
@@ -28,7 +28,21 @@ class Transformation extends Model
      * @var array
      */
     protected $visible = [
+        'name',
+        'size',
+        'width',
+        'height',
+        'type',
+        'url'
+    ];
 
+    /**
+     * The accessors to append to the model's array form.
+     *
+     * @var array
+     */
+    protected $appends = [
+        'url'
     ];
 
     /**
@@ -39,6 +53,26 @@ class Transformation extends Model
     public function __toString()
     {
         return $this->type;
+    }
+
+    /**
+     * Get the url to this resource.
+     *
+     * @return string
+     */
+    public function getUrlAttribute()
+    {
+        return $this->file->getUrl($this->name);
+    }
+
+    /**
+     * Get the human readable file size.
+     *
+     * @return string
+     */
+    public function getSizeAttribute()
+    {
+        return filesize_to_human($this->attributes['size']);
     }
 
     /**

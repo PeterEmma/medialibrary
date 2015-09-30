@@ -15,4 +15,6 @@ phpcs:
   script:
     - php -v
     - phpcs --version
-    - phpcs -p --standard=PSR2 --ignore="app/helpers.php" app/
+    - phpcs -p --standard=PSR2 --ignore="src/helpers.php" src/
+  only:
+    - develop
