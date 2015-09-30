@@ -42,8 +42,21 @@ class File extends Model
         'id',
         'url',
         'name',
+        'type',
         'size',
-        'type'
+        'width',
+        'height',
+        'preview'
+    ];
+
+    /**
+     * The accessors to append to the model's array form.
+     *
+     * @var array
+     */
+    protected $appends = [
+        'url',
+        'preview'
     ];
 
     /**
@@ -192,6 +205,11 @@ class File extends Model
         return filesize_to_human($this->attributes['size']);
     }
 
+    public function getPreviewAttribute()
+    {
+        return $this->getUrl('thumb');
+    }
+
     /**
      * The file owner.
      *
@@ -219,7 +237,7 @@ class File extends Model
      */
     public function transformations()
     {
-        return $this->hasMany(Transformation::class);
+        return $this->hasMany(Transformation::class)->with(['file']);
     }
 
     /**
