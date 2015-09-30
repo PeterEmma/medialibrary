@@ -1,14 +1,18 @@
 image: tetraweb/php:5.6-cli
 
 before_script:
-  - php -v
-  - pear install PHP_CodeSniffer
-  - phpcs --version
+  - docker-php-ext-enable zip
+  - docker-php-ext-enable mbstring
 
-types:
+variables:
+  WITH_XDEBUG: "1"
+
+stages:
   - cs
 
 phpcs:
   type: cs
   script:
-    - phpcs -p --standard=PSR2 --ignore="src/helpers.php" src/
+    - php -v
+    - phpcs --version
+    - phpcs -p --standard=PSR2 --ignore="app/helpers.php" app/
