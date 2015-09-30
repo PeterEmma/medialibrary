@@ -24,12 +24,12 @@ return [
 
     'relations' => [
 
-        'owner'      => 'App\Models\Tenant',
-        'user'       => 'App\Models\User', // or null
+        'owner'      => 'App\User',
+        'user'       => null,
 
         'attachment' => [
 
-            //'post' => 'App\Models\Post',
+//            'post' => 'App\Models\Post',
 
         ],
 
@@ -40,91 +40,62 @@ return [
     | Files types
     |--------------------------------------------------------------------------
     |
-    | Supported: "images", "videos", "docs", "audio"
-    |
     | {name} => [
-    |       'mimes' => [
-    |           {extention} => {mime type}
+    |
+    |       'mimes'           => [
+    |
+    |           {extension} => {mime type}
+    |
     |       ],
+    |
     |       'transformations' => [
+    |
     |           {name} => [
-    |               'sizes' => [
-    |                   {width}x{height} => [
-    |                       'width'  => {(int) pixels},
-    |                       'height' => {(int) pixels},
-    |                       'queue'  => {(boolean,string|optional|default:true,uses (if set) transformation.{name}.queue)
-    |                                    false when size must not be queued and created directly or special queue name}
-    |                   ]
-    |               ],
-    |               'queue' => {(string|optional|default:medialibrary_{files.{name}}) queue name}
+    |
+    |               'transformer' => ITransformer::class,
+    |               'queued'      => {(bool|string) boolean to indicate queue or not, string if on a custom queue}
+    |               'config'      => {(array) an array with configuration}
+    |
     |           ]
     |
     |       ],
     |
-    |       'max_file_size' => {(int) the max filesize in bytes, when exceeded a \Exception is thrown}
+    |       'max_file_size'   => {(int) the max filesize in bytes, when exceeded a \Exception is thrown}
     | ]
+    |
     */
 
-    'files_types' => [
+    'file_types' => [
 
         'image'    => [
 
             'mimes'           => [
 
                 'gif'  => 'image/gif',
-                'jpeg' => 'image/jpeg',
+                'png'  => 'image/png',
                 'jpg'  => 'image/jpeg',
-                'ico'  => 'image/x-icon',
-                'png'  => 'image/png'
+                'jpeg' => 'image/jpeg'
 
             ],
 
             'transformations' => [
 
-                'thumbs' => [
+                'thumb' => [
 
-                    'sizes' => [
+                    'transformer' => CipeMotion\Medialibrary\Transformers\ResizeTransformer::class,
 
-                        '200x200' => [
+                    'queued'      => false,
 
-                            'width'  => 200,
-                            'height' => 200,
-                            'queue'  => false
+                    'config'      => [
 
-                        ],
+                        'size' => [
 
-                        '280x240' => [
-
-                            'width'  => 280,
-                            'height' => 240
+                            'w' => 280,
+                            'h' => 280
 
                         ]
 
                     ]
-
-                ],
-
-                'retina' => [
-
-                    'sizes' => [
-
-                        '900x900' => [
-
-                            'width'  => 900,
-                            'height' => 900
-
-                        ],
-
-                        '980x940' => [
-
-                            'width'  => 980,
-                            'height' => 940
-
-                        ]
-
-                    ],
-
-                    'queue' => 'medialibrary_retina'
 
                 ]
 
@@ -136,7 +107,7 @@ return [
 
         'video'    => [
 
-            'mimes'         => [
+            'mimes'           => [
 
                 'avi'   => [
 
@@ -168,21 +139,15 @@ return [
 
             ],
 
-            'convert_to'    => [
+            'transformations' => [],
 
-                'mp4' => 'video/mp4'
-                //'ogg' => 'video/ogg',
-                //'webm' => 'video/webm'
-
-            ],
-
-            'max_file_size' => 500 * 1024 * 1024
+            'max_file_size'   => 500 * 1024 * 1024
 
         ],
 
         'document' => [
 
-            'mimes'         => [
+            'mimes'           => [
 
                 'pdf'  => [
 
@@ -237,13 +202,15 @@ return [
                 'xlsx' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
             ],
 
-            'max_file_size' => 10 * 1024 * 1024
+            'transformations' => [],
+
+            'max_file_size'   => 10 * 1024 * 1024
 
         ],
 
         'audio'   => [
 
-            'mimes'         => [
+            'mimes'           => [
 
                 'mp3' => [
 
@@ -267,12 +234,9 @@ return [
 
             ],
 
-            'convert_to'    => [
-                'mp3' => 'audio/mpeg3'
-                //'ogg' => 'application/ogg',
-            ],
+            'transformations' => [],
 
-            'max_file_size' => 50 * 1024 * 1024
+            'max_file_size'   => 50 * 1024 * 1024
 
         ]
 
