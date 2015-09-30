@@ -2,9 +2,9 @@
 
 namespace CipeMotion\Medialibrary\Entities;
 
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
 
 class Category extends Model
 {
@@ -19,13 +19,20 @@ class Category extends Model
     ];
 
     // Scopes
+    public function scopeParents(Builder $builder)
+    {
+        $builder->whereNull('parent_id');
+    }
     public function scopeStructured(Builder $builder)
     {
         $builder->with(['childs'])->whereNull('parent_id');
     }
 
     // Getters
-    // ...
+    public function __toString()
+    {
+        return $this->name;
+    }
 
     // Setters
     // ...
