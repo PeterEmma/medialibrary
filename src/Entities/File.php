@@ -308,7 +308,7 @@ class File extends Model
         $file->type      = $type;
         $file->disk      = $disk;
         $file->filename  = $upload->getClientOriginalName();
-        $file->extension = $upload->getClientOriginalExtension();
+        $file->extension = strtolower($upload->getClientOriginalExtension());
         $file->mime_type = $upload->getMimeType();
         $file->size      = $upload->getSize();
 
