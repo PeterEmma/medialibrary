@@ -33,7 +33,9 @@ class Transformation extends Model
         'width',
         'height',
         'type',
-        'url'
+        'url',
+        'created_at',
+        'updated_at'
     ];
 
     /**

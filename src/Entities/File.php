@@ -47,7 +47,9 @@ class File extends Model
         'size',
         'width',
         'height',
-        'preview'
+        'preview',
+        'created_at',
+        'updated_at'
     ];
 
     /**
