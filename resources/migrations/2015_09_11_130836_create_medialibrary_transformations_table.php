@@ -32,8 +32,10 @@ class CreateMedialibraryTransformationsTable extends Migration
             $table->text('properties')->nullable();
 
             // Properties
-            $table->string('type');
             $table->string('name');
+            $table->string('type');
+            $table->string('disk');
+            $table->string('filename');
             $table->string('extension');
             $table->string('mime_type');
             $table->integer('size');
