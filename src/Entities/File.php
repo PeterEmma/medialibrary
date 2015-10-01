@@ -286,15 +286,15 @@ class File extends Model
         $file->id       = Uuid::uuid4()->toString();
         $file->owner_id = auth()->user()->id;
 
-        if (array_get($attributes, 'category') > 0) {
+        if (array_get($attributes, 'category', 0) > 0) {
             $file->category_id = array_get($attributes, 'category');
         }
 
-        if (array_has($attributes, 'name')) {
+        if (!empty(array_get($attributes, 'name'))) {
             $file->name = array_get($attributes, 'name');
         }
 
-        if (array_has($attributes, 'caption')) {
+        if (!empty(array_has($attributes, 'caption'))) {
             $file->caption = array_get($attributes, 'caption');
         }
 
