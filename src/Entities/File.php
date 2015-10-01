@@ -2,6 +2,7 @@
 
 namespace CipeMotion\Medialibrary\Entities;
 
+use Image;
 use Storage;
 use Rhumsaa\Uuid\Uuid;
 use CipeMotion\Medialibrary\FileTypes;
@@ -301,7 +302,7 @@ class File extends Model
         $type = self::getTypeForMime($upload->getMimeType());
 
         if ($type === FileTypes::TYPE_IMAGE) {
-            $image = \Image::make($upload);
+            $image = Image::make($upload);
 
             $file->width  = $image->getWidth();
             $file->height = $image->getHeight();
