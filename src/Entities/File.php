@@ -2,6 +2,7 @@
 
 namespace CipeMotion\Medialibrary\Entities;
 
+use Image;
 use Storage;
 use Rhumsaa\Uuid\Uuid;
 use CipeMotion\Medialibrary\FileTypes;
@@ -205,9 +206,14 @@ class File extends Model
         return filesize_to_human($this->attributes['size']);
     }
 
+    /**
+     * Get the url to a file preview.
+     *
+     * @return string|null
+     */
     public function getPreviewAttribute()
     {
-        return $this->getUrl('thumb');
+        return ($this->type === FileTypes::TYPE_IMAGE) ? $this->getUrl('thumb') : null;
     }
 
     /**
@@ -281,22 +287,22 @@ class File extends Model
         $file->id       = Uuid::uuid4()->toString();
         $file->owner_id = auth()->user()->id;
 
-        if (array_get($attributes, 'category') > 0) {
+        if (array_get($attributes, 'category', 0) > 0) {
             $file->category_id = array_get($attributes, 'category');
         }
 
-        if (array_has($attributes, 'name')) {
+        if (!empty(array_get($attributes, 'name'))) {
             $file->name = array_get($attributes, 'name');
         }
 
-        if (array_has($attributes, 'caption')) {
+        if (!empty(array_has($attributes, 'caption'))) {
             $file->caption = array_get($attributes, 'caption');
         }
 
         $type = self::getTypeForMime($upload->getMimeType());
 
         if ($type === FileTypes::TYPE_IMAGE) {
-            $image = \Image::make($upload);
+            $image = Image::make($upload);
 
             $file->width  = $image->getWidth();
             $file->height = $image->getHeight();
