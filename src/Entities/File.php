@@ -205,9 +205,14 @@ class File extends Model
         return filesize_to_human($this->attributes['size']);
     }
 
+    /**
+     * Get the url to a file preview.
+     *
+     * @return string|null
+     */
     public function getPreviewAttribute()
     {
-        return $this->getUrl('thumb');
+        return ($this->type === FileTypes::TYPE_IMAGE) ? $this->getUrl('thumb') : null;
     }
 
     /**
