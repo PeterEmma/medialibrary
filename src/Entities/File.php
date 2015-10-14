@@ -123,7 +123,7 @@ class File extends Model
                 Storage::disk($this->disk)->get("{$this->id}/upload.{$this->extension}")
             );
 
-            $this->localPath = $temp;
+            $this->setLocalPath($temp);
         }
 
         return $this->localPath;
@@ -329,9 +329,9 @@ class File extends Model
         );
 
         if ($success) {
-            $file->save();
-
             $file->setLocalPath($upload->getRealPath());
+
+            $file->save();
 
             return $file;
         }
