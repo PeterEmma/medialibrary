@@ -73,12 +73,12 @@ class ResizeTransformer
 
         if (array_get($this->config, 'default', false)) {
             Storage::disk($file->disk)->put(
-                "{$file->id}/{$transformation->name}.{$transformation->extension}",
+                "{$file->id}/upload.{$transformation->extension}",
                 fopen($destination, 'r')
             );
         } else {
             Storage::disk($file->disk)->put(
-                "{$file->id}/upload.{$transformation->extension}",
+                "{$file->id}/{$transformation->name}.{$transformation->extension}",
                 fopen($destination, 'r')
             );
         }

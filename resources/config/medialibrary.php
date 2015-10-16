@@ -88,19 +88,20 @@ return [
 
                     'config'      => [
 
-                        'size' => [
+                        'size'    => [
 
                             'w' => 900
 
                         ],
 
-                        'aspect' => true,
+                        'aspect'  => true,
 
-                        'upsize' => false
+                        'upsize'  => false,
+
+                        'default' => true
 
                     ],
 
-                    'default'     => true
 
                 ],
 
