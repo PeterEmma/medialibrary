@@ -80,7 +80,31 @@ return [
 
             'transformations' => [
 
-                'thumb' => [
+                'default' => [
+
+                    'transformer' => CipeMotion\Medialibrary\Transformers\ResizeTransformer::class,
+
+                    'queued'      => true,
+
+                    'config'      => [
+
+                        'size' => [
+
+                            'w' => 900
+
+                        ],
+
+                        'aspect' => true,
+
+                        'upsize' => false
+
+                    ],
+
+                    'default'     => true
+
+                ],
+
+                'thumb'   => [
 
                     'transformer' => CipeMotion\Medialibrary\Transformers\ResizeTransformer::class,
 
@@ -88,12 +112,16 @@ return [
 
                     'config'      => [
 
-                        'size' => [
+                        'size'  => [
 
                             'w' => 280,
                             'h' => 280
 
-                        ]
+                        ],
+
+                        'aspect' => true,
+
+                        'upsize' => true
 
                     ]
 

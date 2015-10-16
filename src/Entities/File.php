@@ -48,6 +48,7 @@ class File extends Model
         'width',
         'height',
         'preview',
+        'extension',
         'created_at',
         'updated_at'
     ];

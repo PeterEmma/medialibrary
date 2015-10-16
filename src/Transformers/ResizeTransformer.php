@@ -49,23 +49,39 @@ class ResizeTransformer
         $transformation = new Transformation;
 
         $image = Image::make($file->getLocalPath())->resize(
-            array_get($this->config, 'size.w'),
-            array_get($this->config, 'size.h')
+            array_get($this->config, 'size.w', null),
+            array_get($this->config, 'size.h', null),
+            function ($constraint) {
+                if (array_get($this->config, 'aspect', true)) {
+                    $constraint->aspectRatio();
+                }
+
+                if (!array_get($this->config, 'upsize', true)) {
+                    $constraint->upsize();
+                }
+            }
         )->save($destination);
 
         $transformation->name      = $this->name;
         $transformation->type      = $file->type;
         $transformation->size      = Filesystem::size($destination);
-        $transformation->width     = array_get($this->config, 'size.w');
-        $transformation->height    = array_get($this->config, 'size.h');
+        $transformation->width     = $image->width();
+        $transformation->height    = $image->height();
         $transformation->mime_type = $file->mime_type;
         $transformation->extension = $file->extension;
         $transformation->completed = true;
 
-        Storage::disk($file->disk)->put(
-            "{$file->id}/{$transformation->name}.{$transformation->extension}",
-            fopen($destination, 'r')
-        );
+        if (array_get($this->config, 'default', false)) {
+            Storage::disk($file->disk)->put(
+                "{$file->id}/{$transformation->name}.{$transformation->extension}",
+                fopen($destination, 'r')
+            );
+        } else {
+            Storage::disk($file->disk)->put(
+                "{$file->id}/upload.{$transformation->extension}",
+                fopen($destination, 'r')
+            );
+        }
 
         return $transformation;
     }
