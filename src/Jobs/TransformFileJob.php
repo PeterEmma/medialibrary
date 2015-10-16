@@ -61,6 +61,16 @@ abstract class TransformFileJob extends Job implements SelfHandling
 
         $transformation = $transformer->transform($this->file);
 
-        $this->file->transformations()->save($transformation);
+        if (array_get($this->config, 'default', false)) {
+            $this->file->size      = $transformation->size;
+            $this->file->width     = $transformation->width;
+            $this->file->height    = $transformation->height;
+            $this->file->mime_type = $transformation->mime_type;
+            $this->file->extension = $transformation->extension;
+
+            $this->file->save();
+        } else {
+            $this->file->transformations()->save($transformation);
+        }
     }
 }
