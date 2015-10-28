@@ -27,9 +27,9 @@ class CreateMedialibraryTransformationsTable extends Migration
 
             // Metadata
             $table->timestamps();
+            $table->text('properties')->nullable();
             $table->smallInteger('width')->nullable();
             $table->smallInteger('height')->nullable();
-            $table->text('properties')->nullable();
 
             // Properties
             $table->string('name');
