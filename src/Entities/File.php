@@ -210,6 +210,16 @@ class File extends Model
     }
 
     /**
+     * Get the raw file size.
+     *
+     * @return string
+     */
+    public function getRawSizeAttribute()
+    {
+        return $this->attributes['size'];
+    }
+
+    /**
      * Get the url to a file preview.
      *
      * @return string|null

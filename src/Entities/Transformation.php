@@ -78,6 +78,16 @@ class Transformation extends Model
     }
 
     /**
+     * Get the raw file size.
+     *
+     * @return string
+     */
+    public function getRawSizeAttribute()
+    {
+        return $this->attributes['size'];
+    }
+
+    /**
      * The file this is a transformation for.
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
