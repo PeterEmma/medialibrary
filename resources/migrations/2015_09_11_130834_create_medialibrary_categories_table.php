@@ -19,7 +19,7 @@ class CreateMedialibraryCategoriesTable extends Migration
 
             // Foreign key
             /** @var \Illuminate\Database\Eloquent\Model $owner */
-            $owner = new config('medialibrary.relations.owner');
+            $owner = app(config('medialibrary.relations.owner.model'));
 
             $table->integer('owner_id')->unsigned();
             $table->foreign('owner_id')
@@ -37,6 +37,7 @@ class CreateMedialibraryCategoriesTable extends Migration
 
             // Data
             $table->string('name');
+            $table->integer('order')->unsigned();
 
             // Metadata
             $table->timestamps();

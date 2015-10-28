@@ -226,7 +226,7 @@ class File extends Model
      */
     public function owner()
     {
-        return $this->belongsTo(config('medialibary.relations.owner'));
+        return $this->belongsTo(config('medialibary.relations.owner.model'));
     }
 
     /**
@@ -287,8 +287,11 @@ class File extends Model
         $file = new File;
         $disk = (is_null($disk)) ? config('medialibrary.disk') : $disk;
 
+        /** @var \Illuminate\Database\Eloquent\Model $owner */
+        $owner = call_user_func(config('medialibary.relations.owner.resolver'));
+
         $file->id       = Uuid::uuid4()->toString();
-        $file->owner_id = auth()->user()->id;
+        $file->owner_id = $owner->getKey();
 
         if (array_get($attributes, 'category', 0) > 0) {
             $file->category_id = array_get($attributes, 'category');

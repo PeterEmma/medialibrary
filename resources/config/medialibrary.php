@@ -24,8 +24,23 @@ return [
 
     'relations' => [
 
-        'owner'      => 'App\User',
-        'user'       => null,
+        'owner'      => [
+
+            'model'    => 'App\User',
+
+            'resolver' => function () {
+                return auth()->user();
+            }
+
+        ],
+
+        'user'       => [
+
+            'model'    => null,
+
+            'resolver' => null
+
+        ],
 
         'attachment' => [
 

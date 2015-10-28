@@ -20,7 +20,7 @@ class CreateMedialibraryFilesTable extends Migration
 
             // Foreign keys
             /** @var \Illuminate\Database\Eloquent\Model $owner */
-            $owner = new config('medialibrary.relations.owner');
+            $owner = app(config('medialibrary.relations.owner.model'));
 
             $table->integer('owner_id')->unsigned();
             $table->foreign('owner_id')
@@ -29,9 +29,9 @@ class CreateMedialibraryFilesTable extends Migration
                   ->onUpdate('CASCADE')
                   ->onDelete('CASCADE');
 
-            if (!is_null(config('medialibrary.relations.user'))) {
+            if (!is_null(config('medialibrary.relations.user.model'))) {
                 /** @var \Illuminate\Database\Eloquent\Model $user */
-                $user = new config('medialibrary.relations.user');
+                $user = app(config('medialibrary.relations.user.model'));
 
                 $table->integer('user_id')->unsigned()->nullable();
                 $table->foreign('user_id')
@@ -54,9 +54,9 @@ class CreateMedialibraryFilesTable extends Migration
 
             // Metadata
             $table->timestamps();
+            $table->text('properties')->nullable();
             $table->smallInteger('width')->nullable();
             $table->smallInteger('height')->nullable();
-            $table->text('properties')->nullable();
 
             // Properties
             $table->string('type');
