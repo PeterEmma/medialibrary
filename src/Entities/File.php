@@ -288,14 +288,14 @@ class File extends Model
         $disk = (is_null($disk)) ? config('medialibrary.disk') : $disk;
 
         /** @var \Illuminate\Database\Eloquent\Model $owner */
-        $owner = call_user_func(config('medialibary.relations.owner.resolver'));
+        $owner = call_user_func(config('medialibrary.relations.owner.resolver'));
 
         $file->id       = Uuid::uuid4()->toString();
         $file->owner_id = $owner->getKey();
 
         if (!is_null(config('medialibrary.relations.user.model'))) {
             /** @var \Illuminate\Database\Eloquent\Model $user */
-            $user = call_user_func(config('medialibary.relations.user.resolver'));
+            $user = call_user_func(config('medialibrary.relations.user.resolver'));
 
             $file->user_id = $user->getKey();
         }
