@@ -293,6 +293,13 @@ class File extends Model
         $file->id       = Uuid::uuid4()->toString();
         $file->owner_id = $owner->getKey();
 
+        if (!is_null(config('medialibrary.relations.user.model'))) {
+            /** @var \Illuminate\Database\Eloquent\Model $user */
+            $user = call_user_func(config('medialibary.relations.user.resolver'));
+
+            $file->user_id = $user->getKey();
+        }
+
         if (array_get($attributes, 'category', 0) > 0) {
             $file->category_id = array_get($attributes, 'category');
         }
