@@ -55,6 +55,6 @@ On your models add:
 ```
 public function attachebles()
 {
-    return $this->morphToMany(\CipeMotion\Medialibrary\Entities\File::class, 'attacheable', 'medialibrary_attachable');
+    return $this->morphToMany(\CipeMotion\Medialibrary\Entities\File::class, 'attachable', 'medialibrary_attachable');
 }
 ```
