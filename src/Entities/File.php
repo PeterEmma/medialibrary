@@ -2,6 +2,7 @@
 
 namespace CipeMotion\Medialibrary\Entities;
 
+use Illuminate\Database\Eloquent\Builder;
 use Image;
 use Storage;
 use Rhumsaa\Uuid\Uuid;
@@ -107,6 +108,17 @@ class File extends Model
     public function __toString()
     {
         return $this->name;
+    }
+
+    /**
+     * Scope the query to exclude or show only hidden files.
+     *
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @param bool                                  $hidden
+     */
+    public function scopeHidden(Builder $query, $hidden = true)
+    {
+        $query->where('is_hidden', (bool)$hidden);
     }
 
     /**
@@ -230,6 +242,26 @@ class File extends Model
     }
 
     /**
+     * Get if the image is hidden.
+     *
+     * @return bool $value
+     */
+    public function getIsHiddenAttribute()
+    {
+        return (bool)$this->attributes['is_hidden'];
+    }
+
+    /**
+     * Set if the image is hidden.
+     *
+     * @param bool $value
+     */
+    public function setIsHiddenAttribute($value)
+    {
+        $this->attributes['is_hidden'] = (bool)$value;
+    }
+
+    /**
      * The file owner.
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
@@ -341,7 +373,7 @@ class File extends Model
         $file->mime_type = $upload->getMimeType();
         $file->size      = $upload->getSize();
 
-        $file->hidden    = false;
+        $file->is_hidden = array_get($attributes, 'is_hidden', false);
         $file->completed = true;
 
         $success = \Storage::disk($disk)->put(
