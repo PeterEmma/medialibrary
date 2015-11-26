@@ -134,6 +134,8 @@ return [
                             'h' => 280
 
                         ],
+                        
+                        'fit'    => true,
 
                         'aspect' => true,
 

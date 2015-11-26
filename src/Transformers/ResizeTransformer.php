@@ -48,20 +48,34 @@ class ResizeTransformer
         $destination    = get_temp_path();
         $transformation = new Transformation;
 
-        $image = Image::make($file->getLocalPath())->resize(
-            array_get($this->config, 'size.w', null),
-            array_get($this->config, 'size.h', null),
-            function ($constraint) {
-                if (array_get($this->config, 'aspect', true)) {
-                    $constraint->aspectRatio();
+        $image = Image::make($file->getLocalPath());
+        if (array_get($this->config, 'fit', false)) {
+            $image->fit(
+                array_get($this->config, 'size.w', null),
+                array_get($this->config, 'size.h', null),
+                function ($constraint) {
+                    if (!array_get($this->config, 'upsize', true)) {
+                        $constraint->upsize();
+                    }
                 }
+            );
+        } else {
+            $image->resize(
+                array_get($this->config, 'size.w', null),
+                array_get($this->config, 'size.h', null),
+                function ($constraint) {
+                    if (array_get($this->config, 'aspect', true)) {
+                        $constraint->aspectRatio();
+                    }
 
-                if (!array_get($this->config, 'upsize', true)) {
-                    $constraint->upsize();
+                    if (!array_get($this->config, 'upsize', true)) {
+                        $constraint->upsize();
+                    }
                 }
-            }
-        )->save($destination);
-
+            );
+        }
+        $image->save($destination);
+        
         $transformation->name      = $this->name;
         $transformation->type      = $file->type;
         $transformation->size      = Filesystem::size($destination);
