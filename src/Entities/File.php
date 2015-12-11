@@ -268,7 +268,7 @@ class File extends Model
      */
     public function owner()
     {
-        return $this->belongsTo(config('medialibary.relations.owner.model'));
+        return $this->belongsTo(config('medialibrary.relations.owner.model'));
     }
 
     /**
