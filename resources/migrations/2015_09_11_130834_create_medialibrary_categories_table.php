@@ -37,7 +37,7 @@ class CreateMedialibraryCategoriesTable extends Migration
 
             // Data
             $table->string('name');
-            $table->integer('order')->unsigned();
+            $table->integer('order')->unsigned()->default(0);
 
             // Metadata
             $table->timestamps();
