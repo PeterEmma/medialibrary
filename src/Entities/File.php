@@ -5,7 +5,7 @@ namespace CipeMotion\Medialibrary\Entities;
 use Illuminate\Database\Eloquent\Builder;
 use Image;
 use Storage;
-use Rhumsaa\Uuid\Uuid;
+use Ramsey\Uuid\Uuid;
 use CipeMotion\Medialibrary\FileTypes;
 use Illuminate\Database\Eloquent\Model;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
