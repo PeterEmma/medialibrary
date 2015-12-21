@@ -3,7 +3,7 @@
 namespace CipeMotion\Medialibrary\Observers;
 
 use Storage;
-use Rhumsaa\Uuid\Uuid;
+use Ramsey\Uuid\Uuid;
 use CipeMotion\Medialibrary\Entities\File;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use CipeMotion\Medialibrary\Jobs\DeleteFileJob;

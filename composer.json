@@ -13,7 +13,7 @@
         }
     ],
     "require": {
-        "ramsey/uuid": "^2.8",
+        "ramsey/uuid": "^3.1",
         "intervention/image": "^2.3",
         "illuminate/support": "^5.1",
         "illuminate/database": "^5.1"
