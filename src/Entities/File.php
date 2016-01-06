@@ -89,8 +89,8 @@ class File extends Model
     {
         $relations = config('medialibrary.relations.attachment');
 
-        if (in_array($method, $relations)) {
-            return $this->morphedByMany($relations[$method], 'attachable');
+        if (array_has($relations, $method)) {
+            return $this->morphedByMany($relations[$method], 'attachable', 'medialibrary_attachable');
         }
 
         if (starts_with($method, 'getUrl') && ends_with($method, 'Attribute') && $method !== 'getUrlAttribute') {
@@ -298,7 +298,7 @@ class File extends Model
      */
     public function attachables()
     {
-        return $this->morphTo();
+        return $this->hasMany(Attachable::class);
     }
 
     /**
