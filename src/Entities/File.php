@@ -2,12 +2,12 @@
 
 namespace CipeMotion\Medialibrary\Entities;
 
-use Illuminate\Database\Eloquent\Builder;
 use Image;
 use Storage;
-use Ramsey\Uuid\Uuid;
+use Rhumsaa\Uuid\Uuid;
 use CipeMotion\Medialibrary\FileTypes;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Builder;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 class File extends Model
@@ -51,7 +51,8 @@ class File extends Model
         'preview',
         'extension',
         'created_at',
-        'updated_at'
+        'updated_at',
+        'attachment_count'
     ];
 
     /**
@@ -61,7 +62,8 @@ class File extends Model
      */
     protected $appends = [
         'url',
-        'preview'
+        'preview',
+        'attachment_count'
     ];
 
     /**
@@ -259,6 +261,16 @@ class File extends Model
     public function setIsHiddenAttribute($value)
     {
         $this->attributes['is_hidden'] = (bool)$value;
+    }
+
+    /**
+     * Get the attachments count attribute.
+     *
+     * @return string
+     */
+    public function getAttachmentCountAttribute()
+    {
+        return $this->attachables->count();
     }
 
     /**
