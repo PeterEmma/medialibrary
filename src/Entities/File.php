@@ -4,7 +4,7 @@ namespace CipeMotion\Medialibrary\Entities;
 
 use Image;
 use Storage;
-use Rhumsaa\Uuid\Uuid;
+use Ramsey\Uuid\Uuid;
 use CipeMotion\Medialibrary\FileTypes;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
