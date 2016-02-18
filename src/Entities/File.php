@@ -46,6 +46,7 @@ class File extends Model
         'name',
         'type',
         'size',
+        'group',
         'width',
         'height',
         'preview',
@@ -79,6 +80,13 @@ class File extends Model
      * @var string|null
      */
     protected $localPath = null;
+
+    /**
+     * The group transformations cache.
+     *
+     * @var array|null
+     */
+    protected $groupTransformationsCache = null;
 
     /**
      * Handle dynamic method calls into the model.
@@ -121,6 +129,21 @@ class File extends Model
     public function scopeHidden(Builder $query, $hidden = true)
     {
         $query->where('is_hidden', (bool)$hidden);
+    }
+
+    /**
+     * Scope the query to the file type.
+     *
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @param array|string                          $group
+     */
+    public function scopeGroup(Builder $query, $group)
+    {
+        if (is_array($group)) {
+            $query->whereIn('group', $group);
+        } else {
+            $query->where('group', $group);
+        }
     }
 
     /**
@@ -328,6 +351,43 @@ class File extends Model
     }
 
     /**
+     * Get the group attribute.
+     *
+     * @return array
+     */
+    public function getGroupTransformations()
+    {
+        if (is_null($this->groupTransformationsCache)) {
+            $transformers      = config("medialibrary.file_types.{$this->attributes['type']}.transformations");
+            $transformerGroups = config("medialibrary.file_types.{$this->attributes['type']}.transformationGroups");
+
+            // Check if we have transformation group else use default
+            $group = isset($this->attributes['group']) ? $this->attributes['group'] : null;
+            if (is_null($group) || !array_has($transformerGroups, $group)) {
+                $transformerGroup = array_get($transformerGroups, 'default', []);
+            } else {
+                $transformerGroup = array_get($transformerGroups, $group, []);
+            }
+
+            // Transformations array with default thumb generator
+            $transformations = [
+                'thumb' => config("medialibrary.file_types.{$this->attributes['type']}.thumb")
+            ];
+
+            // Makes the transformation group complete with the transformation data
+            foreach ($transformerGroup as $transformationName) {
+                $transformations[$transformationName] = array_get($transformers, $transformationName);
+            }
+
+            $this->groupTransformationsCache = array_filter($transformations, function ($transformer) {
+                return !is_null($transformer);
+            });
+        }
+
+        return $this->groupTransformationsCache;
+    }
+
+    /**
      * File upload helper.
      *
      * @param \Symfony\Component\HttpFoundation\File\UploadedFile $upload
@@ -352,6 +412,10 @@ class File extends Model
             $user = call_user_func(config('medialibrary.relations.user.resolver'));
 
             $file->user_id = $user->getKey();
+        }
+
+        if (!empty(array_has($attributes, 'group'))) {
+            $file->group = array_get($attributes, 'group');
         }
 
         if (array_get($attributes, 'category', 0) > 0) {
