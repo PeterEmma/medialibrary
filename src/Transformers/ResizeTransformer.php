@@ -8,7 +8,7 @@ use Storage;
 use CipeMotion\Medialibrary\Entities\File;
 use CipeMotion\Medialibrary\Entities\Transformation;
 
-class ResizeTransformer
+class ResizeTransformer implements ITransformer
 {
     /**
      * The transformation name.
