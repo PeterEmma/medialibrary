@@ -139,7 +139,7 @@ class DocumentTransformer implements ITransformer
 
         Storage::disk($file->disk)->put(
             "{$file->id}/{$transformation->name}.{$transformation->extension}",
-            fopen($destination, 'r')
+            file_get_contents($destination)
         );
 
         return $transformation;
