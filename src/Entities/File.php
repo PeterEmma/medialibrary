@@ -469,7 +469,7 @@ class File extends Model
 
         $success = \Storage::disk($disk)->put(
             "{$file->id}/upload.{$file->extension}",
-            fopen($upload->getRealPath(), 'r')
+            file_get_contents($upload->getRealPath())
         );
 
         if ($success) {

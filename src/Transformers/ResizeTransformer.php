@@ -88,12 +88,12 @@ class ResizeTransformer implements ITransformer
         if (array_get($this->config, 'default', false)) {
             Storage::disk($file->disk)->put(
                 "{$file->id}/upload.{$transformation->extension}",
-                fopen($destination, 'r')
+                file_get_contents($destination)
             );
         } else {
             Storage::disk($file->disk)->put(
                 "{$file->id}/{$transformation->name}.{$transformation->extension}",
-                fopen($destination, 'r')
+                file_get_contents($destination)
             );
         }
 
