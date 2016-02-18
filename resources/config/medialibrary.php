@@ -93,6 +93,41 @@ return [
 
             ],
 
+            'transformationGroups' => [
+
+                'default' => [
+
+                    'default'
+
+                ]
+
+            ],
+
+            'thumb'   => [
+
+                'transformer' => CipeMotion\Medialibrary\Transformers\ResizeTransformer::class,
+
+                'queued'      => false,
+
+                'config'      => [
+
+                    'size'  => [
+
+                        'w' => 280,
+                        'h' => 280
+
+                    ],
+
+                    'fit'    => true,
+
+                    'aspect' => true,
+
+                    'upsize' => true
+
+                ]
+
+            ],
+
             'transformations' => [
 
                 'default' => [
@@ -114,32 +149,6 @@ return [
                         'upsize'  => false,
 
                         'default' => true
-
-                    ],
-
-
-                ],
-
-                'thumb'   => [
-
-                    'transformer' => CipeMotion\Medialibrary\Transformers\ResizeTransformer::class,
-
-                    'queued'      => false,
-
-                    'config'      => [
-
-                        'size'  => [
-
-                            'w' => 280,
-                            'h' => 280
-
-                        ],
-                        
-                        'fit'    => true,
-
-                        'aspect' => true,
-
-                        'upsize' => true
 
                     ]
 
@@ -182,6 +191,12 @@ return [
 
                 ],
                 'ogv'   => 'video/ogg'
+
+            ],
+
+            'transformationGroups' => [
+
+                'default' => []
 
             ],
 
@@ -248,6 +263,42 @@ return [
                 'xlsx' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
             ],
 
+            'thumb'   => [
+
+                'transformer' => CipeMotion\Medialibrary\Transformers\DocumentTransformer::class,
+
+                'queued'      => true,
+
+                'config'      => [
+
+                    'size'  => [
+
+                        'w' => 280,
+                        'h' => 280
+
+                    ],
+
+                    'fit'    => true,
+
+                    //'aspect' => true,
+
+                    //'upsize' => true
+
+                ],
+
+                'defaults' => [
+                    'thumb'   => null, // File url
+                    'preview' => null
+                ],
+
+            ],
+
+            'transformationGroups' => [
+
+                'default' => []
+
+            ],
+
             'transformations' => [],
 
             'max_file_size'   => 10 * 1024 * 1024
@@ -277,6 +328,12 @@ return [
                     'audio/x-m4a'
 
                 ]
+
+            ],
+
+            'transformationGroups' => [
+
+                'default' => []
 
             ],
 

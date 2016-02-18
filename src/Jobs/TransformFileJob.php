@@ -5,6 +5,7 @@ namespace CipeMotion\Medialibrary\Jobs;
 use Storage;
 use CipeMotion\Medialibrary\Entities\File;
 use Illuminate\Contracts\Bus\SelfHandling;
+use CipeMotion\Medialibrary\Transformers\ITransformer;
 
 abstract class TransformFileJob extends Job implements SelfHandling
 {
@@ -59,18 +60,23 @@ abstract class TransformFileJob extends Job implements SelfHandling
         /** @var \CipeMotion\Medialibrary\Transformers\ITransformer $transformer */
         $transformer = app($this->transformer, [$this->name, $this->config]);
 
-        $transformation = $transformer->transform($this->file);
+        if ($transformer instanceof ITransformer) {
+            $transformation = $transformer->transform($this->file);
 
-        if (array_get($this->config, 'default', false)) {
-            $this->file->size      = $transformation->raw_size;
-            $this->file->width     = $transformation->width;
-            $this->file->height    = $transformation->height;
-            $this->file->mime_type = $transformation->mime_type;
-            $this->file->extension = $transformation->extension;
+            if (array_get($this->config, 'default', false)) {
+                $this->file->size      = $transformation->raw_size;
+                $this->file->width     = $transformation->width;
+                $this->file->height    = $transformation->height;
+                $this->file->mime_type = $transformation->mime_type;
+                $this->file->extension = $transformation->extension;
 
-            $this->file->save();
+                $this->file->save();
+            } else {
+                $this->file->transformations()->save($transformation);
+            }
         } else {
-            $this->file->transformations()->save($transformation);
+            // Error
+            \Log::info('Error MediaLibrary unknown transformer instance');
         }
     }
 }

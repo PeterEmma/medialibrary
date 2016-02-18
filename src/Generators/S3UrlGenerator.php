@@ -36,8 +36,9 @@ class S3UrlGenerator implements IUrlGenerator
     {
         $region        = array_get($this->config, 'region');
         $bucket        = array_get($this->config, 'bucket');
+        $extension     = (empty($tranformation)) ? $file->extension : $tranformation->extension;
         $tranformation = (empty($tranformation)) ? 'upload' : $tranformation->name;
 
-        return "https://s3.{$region}.amazonaws.com/{$bucket}/{$file->id}/{$tranformation}.{$file->extension}";
+        return "https://s3.{$region}.amazonaws.com/{$bucket}/{$file->id}/{$tranformation}.{$extension}";
     }
 }
