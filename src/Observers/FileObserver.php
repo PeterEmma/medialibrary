@@ -23,32 +23,34 @@ class FileObserver
 
     public function created(File $file)
     {
-        $transformers = config("medialibrary.file_types.{$file->type}.transformations");
+        $groupTransformations = $file->getGroupTransformations();
 
-        foreach ($transformers as $name => $transformer) {
-            $queue = array_get($transformer, 'queued');
+        if (count($groupTransformations)) {
+            foreach ($groupTransformations as $name => $transformer) {
+                $queue = array_get($transformer, 'queued');
 
-            if ($queue === false) {
-                $job = new TransformFileUnqueuedJob(
-                    $file,
-                    $name,
-                    array_get($transformer, 'transformer'),
-                    array_get($transformer, 'config', [])
-                );
-            } else {
-                $job = new TransformFileQueuedJob(
-                    $file,
-                    $name,
-                    array_get($transformer, 'transformer'),
-                    array_get($transformer, 'config', [])
-                );
+                if ($queue === false) {
+                    $job = new TransformFileUnqueuedJob(
+                        $file,
+                        $name,
+                        array_get($transformer, 'transformer'),
+                        array_get($transformer, 'config', [])
+                    );
+                } else {
+                    $job = new TransformFileQueuedJob(
+                        $file,
+                        $name,
+                        array_get($transformer, 'transformer'),
+                        array_get($transformer, 'config', [])
+                    );
 
-                if (is_string($queue)) {
-                    $job->onQueue($job);
+                    if (is_string($queue)) {
+                        $job->onQueue($job);
+                    }
                 }
-            }
 
-            $this->dispatch($job);
+                $this->dispatch($job);
+            }
         }
     }
 
