@@ -191,7 +191,7 @@ class File extends Model
             /** @var \CipeMotion\Medialibrary\Entities\Transformation|null $transformation */
             $transformation = $this->transformations->where('name', $transformation)->first();
 
-            if (is_null($transformation)){
+            if (is_null($transformation)) {
                 if (!is_null(config("medialibrary.file_types.{$this->type}.thumb.defaults.{$transformationName}"))
                     && !empty(config("medialibrary.file_types.{$this->type}.thumb.defaults.{$transformationName}"))) {
                     return config("medialibrary.file_types.{$this->type}.thumb.defaults.{$transformationName}");
