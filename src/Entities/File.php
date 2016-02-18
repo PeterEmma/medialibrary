@@ -187,8 +187,18 @@ class File extends Model
     public function getUrl($transformation = null)
     {
         if (!empty($transformation)) {
+            $transformationName = $transformation;
             /** @var \CipeMotion\Medialibrary\Entities\Transformation|null $transformation */
             $transformation = $this->transformations->where('name', $transformation)->first();
+
+            if (is_null($transformation)){
+                if (!is_null(config("medialibrary.file_types.{$this->type}.thumb.defaults.{$transformationName}"))
+                    && !empty(config("medialibrary.file_types.{$this->type}.thumb.defaults.{$transformationName}"))) {
+                    return config("medialibrary.file_types.{$this->type}.thumb.defaults.{$transformationName}");
+                } else {
+                    return null;
+                }
+            }
 
             if (!is_null($transformation) && $transformation->completed == false) {
                 $transformation = null;
@@ -263,7 +273,12 @@ class File extends Model
      */
     public function getPreviewAttribute()
     {
-        return ($this->type === FileTypes::TYPE_IMAGE) ? $this->getUrl('thumb') : null;
+        if ($this->type === FileTypes::TYPE_IMAGE) {
+            return $this->getUrl('thumb');
+        } else {
+            return $this->getUrl('thumb');
+        }
+        //($this->type === FileTypes::TYPE_IMAGE) ? $this->getUrl('thumb') : null;
     }
 
     /**
