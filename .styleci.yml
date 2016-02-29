@@ -5,7 +5,5 @@ linting: true
 finder:
   name:
     - "*.php"
-  not-name:
-    - "helpers.php"
   path:
     - "src"
