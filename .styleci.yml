@@ -3,6 +3,8 @@ risky: false
 linting: true
 
 finder:
+  exclude:
+    - "src/helpers.php"
   name:
     - "*.php"
   path:
