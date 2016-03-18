@@ -19,8 +19,9 @@ interface IUrlGenerator
      *
      * @param \CipeMotion\Medialibrary\Entities\File                $file
      * @param \CipeMotion\Medialibrary\Entities\Transformation|null $tranformation
+     * @param bool                                                  $fullPreview
      *
      * @return string
      */
-    public function getUrlForTransformation(File $file, Transformation $tranformation = null);
+    public function getUrlForTransformation(File $file, Transformation $tranformation = null, $fullPreview = false);
 }
