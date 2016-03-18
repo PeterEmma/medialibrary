@@ -181,10 +181,11 @@ class File extends Model
      * Get the url.
      *
      * @param string|null $transformation
+     * @param bool        $fullPreview
      *
      * @return string
      */
-    public function getUrl($transformation = null)
+    public function getUrl($transformation = null, $fullPreview = false)
     {
         if (!empty($transformation)) {
             $transformationName = $transformation;
@@ -205,7 +206,7 @@ class File extends Model
             }
         }
 
-        return $this->getUrlGenerator()->getUrlForTransformation($this, $transformation);
+        return $this->getUrlGenerator()->getUrlForTransformation($this, $transformation, $fullPreview);
     }
 
     /**
@@ -216,6 +217,16 @@ class File extends Model
     public function getUrlAttribute()
     {
         return $this->getUrl();
+    }
+
+    /**
+     * Get the download url attribute.
+     *
+     * @return string
+     */
+    public function getDownloadUrlAttribute()
+    {
+        return $this->getDownloadUrl();
     }
 
     /**
@@ -279,6 +290,20 @@ class File extends Model
             return $this->getUrl('thumb');
         }
         //($this->type === FileTypes::TYPE_IMAGE) ? $this->getUrl('thumb') : null;
+    }
+
+    /**
+     * Get the url to a file full preview.
+     *
+     * @return string|null
+     */
+    public function getPreviewFullAttribute()
+    {
+        if ($this->type === FileTypes::TYPE_IMAGE) {
+            return $this->getUrl();
+        } else {
+            return $this->getUrl(null, true);
+        }
     }
 
     /**

@@ -2,6 +2,7 @@
 
 namespace CipeMotion\Medialibrary\Generators;
 
+use CipeMotion\Medialibrary\FileTypes;
 use CipeMotion\Medialibrary\Entities\File;
 use CipeMotion\Medialibrary\Entities\Transformation;
 
@@ -29,16 +30,27 @@ class S3UrlGenerator implements IUrlGenerator
      *
      * @param \CipeMotion\Medialibrary\Entities\File                $file
      * @param \CipeMotion\Medialibrary\Entities\Transformation|null $tranformation
+     * @param bool                                                  $fullPreview
      *
      * @return string
      */
-    public function getUrlForTransformation(File $file, Transformation $tranformation = null)
+    public function getUrlForTransformation(File $file, Transformation $tranformation = null, $fullPreview = false)
     {
         $region        = array_get($this->config, 'region');
         $bucket        = array_get($this->config, 'bucket');
-        $extension     = (empty($tranformation)) ? $file->extension : $tranformation->extension;
-        $tranformation = (empty($tranformation)) ? 'upload' : $tranformation->name;
+        if (empty($tranformation)) {
+            $tranformationName = 'upload';
+            $extension         = $file->extension;
 
-        return "https://s3.{$region}.amazonaws.com/{$bucket}/{$file->id}/{$tranformation}.{$extension}";
+            if ($fullPreview && $file->type !== FileTypes::TYPE_IMAGE) {
+                $extension         = 'jpg';
+                $tranformationName = 'preview';
+            }
+        } else {
+            $tranformationName = $tranformation->name;
+            $extension          = $tranformation->extension;
+        }
+
+        return "https://s3.{$region}.amazonaws.com/{$bucket}/{$file->id}/{$tranformationName}.{$extension}";
     }
 }
