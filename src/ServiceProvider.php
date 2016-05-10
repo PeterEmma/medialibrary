@@ -15,8 +15,6 @@ class ServiceProvider extends LaravelServiceProvider
      */
     public function boot()
     {
-        $this->loadViewsFrom(__DIR__ . '/../resources/views', 'medialibrary');
-
         $this->loadTranslationsFrom(__DIR__ . '/../resources/lang', 'medialibrary');
 
         $this->publishes([
