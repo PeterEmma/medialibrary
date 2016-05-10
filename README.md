@@ -1,17 +1,19 @@
 ## CipeMotion Media Library
 
-A WordPress like (but better, duh) media library.
+A media library package making it easy to implement your own WordPress style media picker component.
+
+This package depends on [`intervention/image`](https://github.com/Intervention/image).
 
 ### Configuration
 
-Add the service provider to your providers array in `app.php`.
+Add the service providers to your providers array in `app.php`.
 
 ```
 CipeMotion\Medialibrary\ServiceProvider::class,
 Intervention\Image\ImageServiceProvider::class
 ```
 
-Add the Facade to the aliases array in `app.php`.
+Optional: Add the [`intervention/image`](https://github.com/Intervention/image) Facade to the aliases array in `app.php`.
 
 ```
 'Image' => Intervention\Image\Facades\Image::class,
