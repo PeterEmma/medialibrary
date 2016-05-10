@@ -1,6 +1,6 @@
 ## CipeMotion Media Library
 
-A WordPress like (but better, duh) media library with file picker component.
+A WordPress like (but better, duh) media library.
 
 ### Configuration
 
