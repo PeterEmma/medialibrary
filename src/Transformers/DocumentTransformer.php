@@ -84,7 +84,7 @@ class DocumentTransformer implements ITransformer
 
         // Save the the transformation
         $preview            = new Transformation;
-        $preview->name      = $this->name;
+        $preview->name      = 'preview';
         $preview->size      = $image->filesize();
         $preview->mime_type = $image->mime();
         $preview->type      = File::getTypeForMime($preview->mime_type);
