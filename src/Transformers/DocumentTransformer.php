@@ -84,8 +84,8 @@ class DocumentTransformer implements ITransformer
 
         // Save the the transformation
         $preview            = new Transformation;
-        $preview->name      = $this->name;
-        $preview->size      = $image->filesize();
+        $preview->name      = 'preview';
+        $preview->size      = Storage::disk($file->disk)->size("{$file->id}/preview.{$extension}");
         $preview->mime_type = $image->mime();
         $preview->type      = File::getTypeForMime($preview->mime_type);
         $preview->width     = $image->width();
