@@ -68,6 +68,16 @@ class Transformation extends Model
     }
 
     /**
+     * Get if the transformation is completed.
+     *
+     * @return string
+     */
+    public function getIsCompletedAttribute()
+    {
+        return (bool)$this->attributes['completed'];
+    }
+
+    /**
      * Get the human readable file size.
      *
      * @return string
