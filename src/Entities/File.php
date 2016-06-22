@@ -53,7 +53,8 @@ class File extends Model
         'extension',
         'created_at',
         'updated_at',
-        'attachment_count'
+        'attachment_count',
+        'preview_is_processing'
     ];
 
     /**
@@ -64,7 +65,8 @@ class File extends Model
     protected $appends = [
         'url',
         'preview',
-        'attachment_count'
+        'attachment_count',
+        'preview_is_processing'
     ];
 
     /**
@@ -190,7 +192,7 @@ class File extends Model
         if (!empty($transformation)) {
             $transformationName = $transformation;
             /** @var \CipeMotion\Medialibrary\Entities\Transformation|null $transformation */
-            $transformation = $this->transformations->where('name', $transformation)->first();
+            $transformation = $this->transformations->where('name', $transformation)->where('completed', 1)->first();
 
             if (is_null($transformation)) {
                 if (!is_null(config("medialibrary.file_types.{$this->type}.thumb.defaults.{$transformationName}"))
@@ -302,8 +304,27 @@ class File extends Model
         if ($this->type === FileTypes::TYPE_IMAGE) {
             return $this->getUrl();
         } else {
-            return $this->getUrl(null, true);
+            return $this->getUrl('preview', true);
         }
+    }
+
+    /**
+     * Get if the image preview is processing.
+     *
+     * @return bool $value
+     */
+    public function getPreviewIsProcessingAttribute()
+    {
+        if (in_array($this->type, [FileTypes::TYPE_IMAGE, FileTypes::TYPE_DOCUMENT, FileTypes::TYPE_VIDEO])
+            && is_null($this->getPreviewFullAttribute())) {
+            $transformationName = $this->type === FileTypes::TYPE_IMAGE ? 'thumb' : 'preview';
+            $translation        = $this->transformations->where('name', $transformationName)->first();
+
+            if (!is_null($translation) && !$translation->isCompleted) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
