@@ -1,7 +1,6 @@
 <?php
 
 if (!function_exists('filesize_to_human')) {
-
     /**
      * Convert bytes to human readable size.
      *
@@ -20,7 +19,6 @@ if (!function_exists('filesize_to_human')) {
 }
 
 if (!function_exists('get_temp_path')) {
-
     /**
      * Get a temporary file path, deleted after the requests finishes.
      *

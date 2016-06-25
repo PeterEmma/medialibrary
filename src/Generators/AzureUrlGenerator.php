@@ -36,15 +36,16 @@ class AzureUrlGenerator implements IUrlGenerator
      */
     public function getUrlForTransformation(File $file, Transformation $tranformation = null, $fullPreview = false)
     {
-        $account       = array_get($this->config, 'account');
-        $container     = array_get($this->config, 'container');
+        $account   = array_get($this->config, 'account');
+        $container = array_get($this->config, 'container');
+
         if (empty($tranformation)) {
             $tranformation = 'upload';
             $extension     = $file->extension;
 
             if ($fullPreview && $file->type !== FileTypes::TYPE_IMAGE) {
-                $extension     = 'jpg';
                 $tranformation = 'preview';
+                $extension     = 'jpg';
             }
         } else {
             $tranformation = $tranformation->name;

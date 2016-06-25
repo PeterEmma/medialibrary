@@ -42,7 +42,6 @@ class DocumentTransformer implements ITransformer
     public function __construct($name, array $config)
     {
         $this->api    = new Api(config('services.cloudconvert.key'));
-
         $this->name   = $name;
         $this->config = $config;
     }
@@ -59,14 +58,14 @@ class DocumentTransformer implements ITransformer
         $extension = array_get($this->config, 'extension', 'jpg');
 
         $cloudconvertSettings = [
-            'inputformat'  => $file->extension,
-            'outputformat' => $extension,
-            'input'        => 'upload',
-            'wait'         => true,
-            'file'         => fopen($file->url, 'r'),
+            'inputformat'      => $file->extension,
+            'outputformat'     => $extension,
+            'input'            => 'upload',
+            'wait'             => true,
+            'file'             => fopen($file->url, 'r'),
             'converteroptions' => [
-                'page_range' => '1-1'
-            ]
+                'page_range' => '1-1',
+            ],
         ];
 
         if (!is_null(config('services.cloudconvert.timeout'))) {
