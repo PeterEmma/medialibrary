@@ -2,11 +2,12 @@
 
 namespace CipeMotion\Medialibrary\Generators;
 
+use Aws\S3\S3Client;
 use CipeMotion\Medialibrary\FileTypes;
 use CipeMotion\Medialibrary\Entities\File;
 use CipeMotion\Medialibrary\Entities\Transformation;
 
-class AzureUrlGenerator implements IUrlGenerator
+class S3PresignedUrlGenerator implements IUrlGenerator
 {
     /**
      * The config.
@@ -16,6 +17,13 @@ class AzureUrlGenerator implements IUrlGenerator
     protected $config;
 
     /**
+     * The S3 client.
+     *
+     * @var \Aws\S3\S3Client
+     */
+    protected $client;
+
+    /**
      * Instantiate the URL generator.
      *
      * @param array $config
@@ -23,6 +31,11 @@ class AzureUrlGenerator implements IUrlGenerator
     public function __construct(array $config)
     {
         $this->config = $config;
+
+        $this->client = new S3Client([
+            'region'  => array_get($this->config, 'region'),
+            'version' => '2006-03-01',
+        ]);
     }
 
     /**
@@ -34,7 +47,6 @@ class AzureUrlGenerator implements IUrlGenerator
      * @param bool                                                  $download
      *
      * @return string
-     * @throws \Exception
      */
     public function getUrlForTransformation(
         File $file,
@@ -42,28 +54,31 @@ class AzureUrlGenerator implements IUrlGenerator
         $fullPreview = false,
         $download = false
     ) {
-        if ($download) {
-            throw new \Exception(
-                'The Azure url generator does not support forced download urls.'
-            );
-        }
-
-        $account   = array_get($this->config, 'account');
-        $container = array_get($this->config, 'container');
-
         if (empty($tranformation)) {
-            $tranformation = 'upload';
-            $extension     = $file->extension;
+            $tranformationName = 'upload';
+            $extension         = $file->extension;
 
             if ($fullPreview && $file->type !== FileTypes::TYPE_IMAGE) {
-                $tranformation = 'preview';
-                $extension     = 'jpg';
+                $tranformationName = 'preview';
+                $extension         = 'jpg';
             }
         } else {
-            $tranformation = $tranformation->name;
-            $extension     = $tranformation->extension;
+            $tranformationName = $tranformation->name;
+            $extension         = $tranformation->extension;
         }
 
-        return "https://{$account}.blob.core.windows.net/{$container}/{$file->id}/{$tranformation}.{$extension}";
+        $commandParams = [
+            'Bucket' => array_get($this->config, 'bucket'),
+            'Key'    => "{$file->id}/{$tranformationName}.{$extension}",
+        ];
+
+        if ($download) {
+            $commandParams['ResponseContentDisposition'] = "attachment; filename={$file->name}";
+        }
+
+        $expires = array_get($this->config, 'presigned.expires', '+20 minutes');
+        $command = $this->client->getCommand('GetObject', $commandParams);
+
+        return (string)$this->client->createPresignedRequest($command, $expires)->getUri();
     }
 }

@@ -12,12 +12,18 @@
             "email": "me@jorisvanw.me"
         }
     ],
+    "suggest": {
+        "aws/aws-sdk-php": "To use the S3PresignedUrlGenerator."
+    },
     "require": {
         "ramsey/uuid": "^3.1",
         "intervention/image": "^2.3",
         "illuminate/support": "^5.1",
         "illuminate/database": "^5.1",
         "jorisvanw/cloudconvert-php": "^3.0"
+    },
+    "require-dev": {
+        "aws/aws-sdk-php": "^3.18"
     },
     "autoload": {
         "files": [

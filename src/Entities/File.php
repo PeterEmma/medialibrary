@@ -185,10 +185,11 @@ class File extends Model
      *
      * @param string|null $transformation
      * @param bool        $fullPreview
+     * @param bool        $download
      *
      * @return string
      */
-    public function getUrl($transformation = null, $fullPreview = false)
+    public function getUrl($transformation = null, $fullPreview = false, $download = false)
     {
         if (!empty($transformation)) {
             $transformationName = $transformation;
@@ -210,7 +211,7 @@ class File extends Model
             }
         }
 
-        return $this->getUrlGenerator()->getUrlForTransformation($this, $transformation, $fullPreview);
+        return $this->getUrlGenerator()->getUrlForTransformation($this, $transformation, $fullPreview, $download);
     }
 
     /**
