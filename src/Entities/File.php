@@ -231,7 +231,7 @@ class File extends Model
      */
     public function getDownloadUrlAttribute()
     {
-        return $this->getDownloadUrl();
+        return $this->getUrl(null, false, true);
     }
 
     /**
@@ -289,12 +289,7 @@ class File extends Model
      */
     public function getPreviewAttribute()
     {
-        if ($this->type === FileTypes::TYPE_IMAGE) {
-            return $this->getUrl('thumb');
-        } else {
-            return $this->getUrl('thumb');
-        }
-        //($this->type === FileTypes::TYPE_IMAGE) ? $this->getUrl('thumb') : null;
+        return $this->getUrl('thumb');
     }
 
     /**
@@ -306,9 +301,9 @@ class File extends Model
     {
         if ($this->type === FileTypes::TYPE_IMAGE) {
             return $this->getUrl();
-        } else {
-            return $this->getUrl('preview', true);
         }
+
+        return $this->getUrl('preview', true);
     }
 
     /**

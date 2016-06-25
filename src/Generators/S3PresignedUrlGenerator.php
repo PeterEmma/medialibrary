@@ -73,7 +73,7 @@ class S3PresignedUrlGenerator implements IUrlGenerator
         ];
 
         if ($download) {
-            $commandParams['ResponseContentDisposition'] = "attachment; filename={$file->name}";
+            $commandParams['ResponseContentDisposition'] = "attachment; filename={$file->filename}";
         }
 
         $expires = array_get($this->config, 'presigned.expires', '+20 minutes');
