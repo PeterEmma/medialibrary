@@ -36,19 +36,20 @@ class S3UrlGenerator implements IUrlGenerator
      */
     public function getUrlForTransformation(File $file, Transformation $tranformation = null, $fullPreview = false)
     {
-        $region        = array_get($this->config, 'region');
-        $bucket        = array_get($this->config, 'bucket');
+        $region = array_get($this->config, 'region');
+        $bucket = array_get($this->config, 'bucket');
+
         if (empty($tranformation)) {
             $tranformationName = 'upload';
             $extension         = $file->extension;
 
             if ($fullPreview && $file->type !== FileTypes::TYPE_IMAGE) {
-                $extension         = 'jpg';
                 $tranformationName = 'preview';
+                $extension         = 'jpg';
             }
         } else {
             $tranformationName = $tranformation->name;
-            $extension          = $tranformation->extension;
+            $extension         = $tranformation->extension;
         }
 
         return "https://s3.{$region}.amazonaws.com/{$bucket}/{$file->id}/{$tranformationName}.{$extension}";

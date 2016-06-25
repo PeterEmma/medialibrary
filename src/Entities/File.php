@@ -32,7 +32,7 @@ class File extends Model
      * @var array
      */
     protected $fillable = [
-        'name'
+        'name',
     ];
 
     /**
@@ -54,7 +54,7 @@ class File extends Model
         'created_at',
         'updated_at',
         'attachment_count',
-        'preview_is_processing'
+        'preview_is_processing',
     ];
 
     /**
@@ -66,7 +66,7 @@ class File extends Model
         'url',
         'preview',
         'attachment_count',
-        'preview_is_processing'
+        'preview_is_processing',
     ];
 
     /**
@@ -93,8 +93,9 @@ class File extends Model
     /**
      * Handle dynamic method calls into the model.
      *
-     * @param  string  $method
-     * @param  array   $parameters
+     * @param  string $method
+     * @param  array  $parameters
+     *
      * @return mixed
      */
     public function __call($method, $parameters)
@@ -196,7 +197,8 @@ class File extends Model
 
             if (is_null($transformation)) {
                 if (!is_null(config("medialibrary.file_types.{$this->type}.thumb.defaults.{$transformationName}"))
-                    && !empty(config("medialibrary.file_types.{$this->type}.thumb.defaults.{$transformationName}"))) {
+                    && !empty(config("medialibrary.file_types.{$this->type}.thumb.defaults.{$transformationName}"))
+                ) {
                     return config("medialibrary.file_types.{$this->type}.thumb.defaults.{$transformationName}");
                 } else {
                     return null;
@@ -316,7 +318,8 @@ class File extends Model
     public function getPreviewIsProcessingAttribute()
     {
         if (in_array($this->type, [FileTypes::TYPE_IMAGE, FileTypes::TYPE_DOCUMENT, FileTypes::TYPE_VIDEO])
-            && is_null($this->getPreviewFullAttribute())) {
+            && is_null($this->getPreviewFullAttribute())
+        ) {
             $transformationName = $this->type === FileTypes::TYPE_IMAGE ? 'thumb' : 'preview';
             $translation        = $this->transformations->where('name', $transformationName)->first();
 
@@ -324,6 +327,7 @@ class File extends Model
                 return true;
             }
         }
+
         return false;
     }
 
@@ -432,7 +436,7 @@ class File extends Model
 
             // Transformations array with default thumb generator
             $transformations = [
-                'thumb' => config("medialibrary.file_types.{$this->attributes['type']}.thumb")
+                'thumb' => config("medialibrary.file_types.{$this->attributes['type']}.thumb"),
             ];
 
             // Makes the transformation group complete with the transformation data

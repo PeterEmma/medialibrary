@@ -4,10 +4,9 @@ namespace CipeMotion\Medialibrary\Jobs;
 
 use Storage;
 use CipeMotion\Medialibrary\Entities\File;
-use Illuminate\Contracts\Bus\SelfHandling;
 use CipeMotion\Medialibrary\Transformers\ITransformer;
 
-abstract class TransformFileJob extends Job implements SelfHandling
+abstract class TransformFileJob extends Job
 {
     /**
      * The file to transform.
