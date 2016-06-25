@@ -31,11 +31,23 @@ class S3UrlGenerator implements IUrlGenerator
      * @param \CipeMotion\Medialibrary\Entities\File                $file
      * @param \CipeMotion\Medialibrary\Entities\Transformation|null $tranformation
      * @param bool                                                  $fullPreview
+     * @param bool                                                  $download
      *
      * @return string
+     * @throws \Exception
      */
-    public function getUrlForTransformation(File $file, Transformation $tranformation = null, $fullPreview = false)
-    {
+    public function getUrlForTransformation(
+        File $file,
+        Transformation $tranformation = null,
+        $fullPreview = false,
+        $download = false
+    ) {
+        if ($download) {
+            throw new \Exception(
+                'The S3 url generator does not support forced download urls. Use the S3PresignedUrlGenerator.'
+            );
+        }
+
         $region = array_get($this->config, 'region');
         $bucket = array_get($this->config, 'bucket');
 
