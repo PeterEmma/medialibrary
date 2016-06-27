@@ -68,8 +68,10 @@ class S3PresignedUrlGenerator implements IUrlGenerator
         }
 
         $commandParams = [
-            'Bucket' => array_get($this->config, 'bucket'),
-            'Key'    => "{$file->id}/{$tranformationName}.{$extension}",
+            'ResponseCacheControl' => 'private, max-age=1200',
+            'ResponseContentType'  => $file->mime_type,
+            'Bucket'               => array_get($this->config, 'bucket'),
+            'Key'                  => "{$file->id}/{$tranformationName}.{$extension}",
         ];
 
         if ($download) {
