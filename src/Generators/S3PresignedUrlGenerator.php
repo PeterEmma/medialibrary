@@ -33,8 +33,12 @@ class S3PresignedUrlGenerator implements IUrlGenerator
         $this->config = $config;
 
         $this->client = new S3Client([
-            'region'  => array_get($this->config, 'region'),
-            'version' => '2006-03-01',
+            'region'      => array_get($this->config, 'region'),
+            'version'     => '2006-03-01',
+            'credentials' => [
+                'key'    => array_get($this->config, 'key'),
+                'secret' => array_get($this->config, 'secret'),
+            ],
         ]);
     }
 
