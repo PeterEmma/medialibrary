@@ -6,7 +6,6 @@ use Image;
 use Storage;
 use CloudConvert\Api;
 use File as Filesystem;
-use CipeMotion\Medialibrary\FileTypes;
 use CipeMotion\Medialibrary\Entities\File;
 use CipeMotion\Medialibrary\Entities\Transformation;
 
@@ -60,9 +59,9 @@ class DocumentTransformer implements ITransformer
         $cloudconvertSettings = [
             'inputformat'      => $file->extension,
             'outputformat'     => $extension,
-            'input'            => 'upload',
+            'input'            => 'download',
             'wait'             => true,
-            'file'             => fopen($file->url, 'r'),
+            'file'             => $file->downloadUrl,
             'converteroptions' => [
                 'page_range' => '1-1',
             ],
