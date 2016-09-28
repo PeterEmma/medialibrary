@@ -485,6 +485,8 @@ class File extends Model
 
         if (!empty(array_get($attributes, 'name'))) {
             $file->name = array_get($attributes, 'name');
+        } else {
+            $file->name = str_replace('.' . $upload->getClientOriginalExtension(), '', $upload->getClientOriginalName());
         }
 
         if (!empty(array_has($attributes, 'caption'))) {
@@ -505,7 +507,7 @@ class File extends Model
 
         $file->type      = $type;
         $file->disk      = $disk;
-        $file->filename  = $upload->getClientOriginalName();
+        $file->filename  = (string)Stringy::create($upload->getClientOriginalName())->toAscii()->trim()->toLowerCase()->slugify();
         $file->extension = strtolower($upload->getClientOriginalExtension());
         $file->mime_type = $upload->getMimeType();
         $file->size      = $upload->getSize();
