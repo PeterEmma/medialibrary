@@ -4,6 +4,7 @@ namespace CipeMotion\Medialibrary\Entities;
 
 use Image;
 use Storage;
+use Stringy\Stringy;
 use Ramsey\Uuid\Uuid;
 use CipeMotion\Medialibrary\FileTypes;
 use Illuminate\Database\Eloquent\Model;
