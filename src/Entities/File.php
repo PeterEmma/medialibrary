@@ -2,11 +2,11 @@
 
 namespace CipeMotion\Medialibrary\Entities;
 
-use Image;
-use Storage;
 use Stringy\Stringy;
 use Ramsey\Uuid\Uuid;
+use Intervention\Image\Facades\Image;
 use CipeMotion\Medialibrary\FileTypes;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
@@ -155,15 +155,12 @@ class File extends Model
      *
      * @return string
      */
-    public function getLocalPath()
+    public function getLocalPath($destination = null)
     {
         if (empty($this->localPath)) {
             $temp = get_temp_path();
 
-            file_put_contents(
-                $temp,
-                Storage::disk($this->disk)->get("{$this->id}/upload.{$this->extension}")
-            );
+            copy($this->getDownloadUrlAttribute(), $temp);
 
             $this->setLocalPath($temp);
         }
@@ -460,42 +457,54 @@ class File extends Model
      */
     public static function uploadFile(UploadedFile $upload, array $attributes = [], $disk = null)
     {
+        // Start our journey with a fresh file Eloquent model
         $file = new File;
+
+        // Retrieve the disk from the config unless it's given to us
         $disk = (is_null($disk)) ? config('medialibrary.disk') : $disk;
 
         /** @var \Illuminate\Database\Eloquent\Model $owner */
         $owner = call_user_func(config('medialibrary.relations.owner.resolver'));
 
+        // Generate a file id and resolve the owner
         $file->id       = Uuid::uuid4()->toString();
         $file->owner_id = $owner->getKey();
 
+        // Check if we need to resolve a user to attach this file to
         if (!is_null(config('medialibrary.relations.user.model'))) {
             /** @var \Illuminate\Database\Eloquent\Model $user */
             $user = call_user_func(config('medialibrary.relations.user.resolver'));
 
+            // Attach the user
             $file->user_id = $user->getKey();
         }
 
+        // If a group is given, set it
         if (!empty(array_has($attributes, 'group'))) {
             $file->group = array_get($attributes, 'group');
         }
 
+        // If a category is given, set it
         if (array_get($attributes, 'category', 0) > 0) {
             $file->category_id = array_get($attributes, 'category');
         }
 
-        if (!empty(array_get($attributes, 'name'))) {
-            $file->name = array_get($attributes, 'name');
+        // If a filename is set use that, otherwise build a filename based on the original name
+        if (!empty($name = array_get($attributes, 'name'))) {
+            $file->name = $name;
         } else {
-            $file->name = str_replace('.' . $upload->getClientOriginalExtension(), '', $upload->getClientOriginalName());
+            $file->name = str_replace(".{$upload->getClientOriginalExtension()}", '', $upload->getClientOriginalName());
         }
 
-        if (!empty(array_has($attributes, 'caption'))) {
-            $file->caption = array_get($attributes, 'caption');
+        // If a caption was set include it
+        if (!empty($caption = array_get($attributes, 'caption'))) {
+            $file->caption = $caption;
         }
 
+        // Extract the type from the mime of the file
         $type = self::getTypeForMime($upload->getMimeType());
 
+        // If the file is a image we also need to find out how big the image is
         if ($type === FileTypes::TYPE_IMAGE) {
             $image = Image::make($upload);
 
@@ -506,21 +515,28 @@ class File extends Model
             $file->height = null;
         }
 
+        // Collect all the metadata we are going to save with the file entry in the database
         $file->type      = $type;
         $file->disk      = $disk;
         $file->filename  = (string)Stringy::create($upload->getClientOriginalName())->toAscii()->trim()->toLowerCase()->slugify();
         $file->extension = strtolower($upload->getClientOriginalExtension());
         $file->mime_type = $upload->getMimeType();
         $file->size      = $upload->getSize();
-
         $file->is_hidden = array_get($attributes, 'is_hidden', false);
         $file->completed = true;
 
-        $success = \Storage::disk($disk)->put(
-            "{$file->id}/upload.{$file->extension}",
-            file_get_contents($upload->getRealPath())
-        );
+        // Get a resource handle on the file so we can stream it to our disk
+        $stream = fopen($upload->getRealPath(), 'r+');
 
+        // Use Laravel' storage engine to store our file on a disk
+        $success = Storage::disk($disk)->put("{$file->id}/upload.{$file->extension}", $stream);
+
+        // Close the resource handle if we need to
+        if (is_resource($stream)) {
+            fclose($stream);
+        }
+
+        // Check if we succeeded
         if ($success) {
             $file->setLocalPath($upload->getRealPath());
 
@@ -529,7 +545,8 @@ class File extends Model
             return $file;
         }
 
-        return $success;
+        // Something went wrong and the file is not uploaded
+        return false;
     }
 
     /**
