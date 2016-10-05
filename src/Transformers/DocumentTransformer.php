@@ -71,8 +71,7 @@ class DocumentTransformer implements ITransformer
             $cloudconvertSettings['timeout'] = config('services.cloudconvert.timeout');
         }
 
-        $convert = $this->api->convert($cloudconvertSettings)->wait();
-
+        $convert  = $this->api->convert($cloudconvertSettings)->wait();
         $contents = file_get_contents('https:' . $convert->output->url . '?inline');
 
         Storage::disk($file->disk)->put("{$file->id}/preview.{$extension}", $contents);
@@ -122,6 +121,7 @@ class DocumentTransformer implements ITransformer
                 }
             );
         }
+
         $image->save($destination);
 
         $transformation = new Transformation;
@@ -137,7 +137,7 @@ class DocumentTransformer implements ITransformer
 
         Storage::disk($file->disk)->put(
             "{$file->id}/{$transformation->name}.{$transformation->extension}",
-            file_get_contents($destination)
+            fopen($destination, 'r+')
         );
 
         return $transformation;

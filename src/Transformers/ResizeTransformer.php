@@ -2,10 +2,11 @@
 
 namespace CipeMotion\Medialibrary\Transformers;
 
-use File as Filesystem;
-use Image;
-use Storage;
+use Intervention\Image\Constraint;
+use Intervention\Image\Facades\Image;
+use Illuminate\Support\Facades\Storage;
 use CipeMotion\Medialibrary\Entities\File;
+use Illuminate\Support\Facades\File as Filesystem;
 use CipeMotion\Medialibrary\Entities\Transformation;
 
 class ResizeTransformer implements ITransformer
@@ -45,15 +46,18 @@ class ResizeTransformer implements ITransformer
      */
     public function transform(File $file)
     {
-        $destination    = get_temp_path();
-        $transformation = new Transformation;
+        // Get a temp path to work with
+        $destination = get_temp_path();
 
-        $image = Image::make($file->getLocalPath());
+        // Get a Image instance from the file
+        $image = Image::make($file->getLocalPath($destination));
+
+        // Resize either with the fit strategy or just force the resize to the size
         if (array_get($this->config, 'fit', false)) {
             $image->fit(
                 array_get($this->config, 'size.w', null),
                 array_get($this->config, 'size.h', null),
-                function ($constraint) {
+                function (Constraint $constraint) {
                     if (!array_get($this->config, 'upsize', true)) {
                         $constraint->upsize();
                     }
@@ -63,7 +67,7 @@ class ResizeTransformer implements ITransformer
             $image->resize(
                 array_get($this->config, 'size.w', null),
                 array_get($this->config, 'size.h', null),
-                function ($constraint) {
+                function (Constraint $constraint) {
                     if (array_get($this->config, 'aspect', true)) {
                         $constraint->aspectRatio();
                     }
@@ -74,8 +78,12 @@ class ResizeTransformer implements ITransformer
                 }
             );
         }
+
+        // Save the image to the temp path
         $image->save($destination);
-        
+
+        // Setup the transformation properties
+        $transformation            = new Transformation;
         $transformation->name      = $this->name;
         $transformation->type      = $file->type;
         $transformation->size      = Filesystem::size($destination);
@@ -85,18 +93,23 @@ class ResizeTransformer implements ITransformer
         $transformation->extension = $file->extension;
         $transformation->completed = true;
 
+        // Get the disk and a stream from the cropped image location
+        $disk   = Storage::disk($file->disk);
+        $stream = fopen($destination, 'r+');
+
+        // Either overwrite the original uploaded file or write to the transformation path
         if (array_get($this->config, 'default', false)) {
-            Storage::disk($file->disk)->put(
-                "{$file->id}/upload.{$transformation->extension}",
-                file_get_contents($destination)
-            );
+            $disk->put("{$file->id}/upload.{$transformation->extension}", $stream);
         } else {
-            Storage::disk($file->disk)->put(
-                "{$file->id}/{$transformation->name}.{$transformation->extension}",
-                file_get_contents($destination)
-            );
+            $disk->put("{$file->id}/{$transformation->name}.{$transformation->extension}", $stream);
         }
 
+        // Close the stream again
+        if (is_resource($stream)) {
+            fclose($stream);
+        }
+
+        // Return the transformation
         return $transformation;
     }
 }
