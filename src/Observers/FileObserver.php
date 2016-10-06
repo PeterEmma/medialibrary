@@ -2,7 +2,6 @@
 
 namespace CipeMotion\Medialibrary\Observers;
 
-use Storage;
 use Ramsey\Uuid\Uuid;
 use CipeMotion\Medialibrary\Entities\File;
 use Illuminate\Foundation\Bus\DispatchesJobs;
