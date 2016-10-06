@@ -2,7 +2,6 @@
 
 namespace CipeMotion\Medialibrary\Jobs;
 
-use Storage;
 use CipeMotion\Medialibrary\Entities\File;
 use CipeMotion\Medialibrary\Transformers\ITransformer;
 
@@ -74,8 +73,7 @@ abstract class TransformFileJob extends Job
                 $this->file->transformations()->save($transformation);
             }
         } else {
-            // Error
-            \Log::info('Error MediaLibrary unknown transformer instance');
+            throw new \Exception('Unknown MediaLibrary transformer.');
         }
     }
 }

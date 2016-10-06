@@ -71,18 +71,37 @@ class DocumentTransformer implements ITransformer
             $cloudconvertSettings['timeout'] = config('services.cloudconvert.timeout');
         }
 
-        $convert  = $this->api->convert($cloudconvertSettings)->wait();
-        $contents = file_get_contents('https:' . $convert->output->url . '?inline');
+        // Run the conversion
+        $convert = $this->api->convert($cloudconvertSettings)->wait();
 
-        Storage::disk($file->disk)->put("{$file->id}/preview.{$extension}", $contents);
+        // Get a temp path
+        $destination = get_temp_path();
+
+        // Download the converted video file
+        copy('https:' . $convert->output->url, $destination);
+
+        // We got it all, cleanup!
+        $convert->delete();
+
+        // Get the disk and a stream from the cropped image location
+        $disk   = Storage::disk($file->disk);
+        $stream = fopen($destination, 'r+');
+
+        // Upload the preview
+        $disk->put("{$file->id}/preview.{$extension}", $stream);
+
+        // Cleanup our streams
+        if (is_resource($stream)) {
+            fclose($stream);
+        }
 
         // Create a Image
-        $image = Image::make($contents);
+        $image = Image::make($destination);
 
-        // Save the the transformation
+        // Build the transformation
         $preview            = new Transformation;
         $preview->name      = 'preview';
-        $preview->size      = Storage::disk($file->disk)->size("{$file->id}/preview.{$extension}");
+        $preview->size      = Filesystem::size($destination);
         $preview->mime_type = $image->mime();
         $preview->type      = File::getTypeForMime($preview->mime_type);
         $preview->width     = $image->width();
@@ -90,10 +109,8 @@ class DocumentTransformer implements ITransformer
         $preview->extension = $extension;
         $preview->completed = true;
 
+        // Store the preview
         $file->transformations()->save($preview);
-
-        // Create a thumb
-        $destination = get_temp_path();
 
         if (array_get($this->config, 'fit', false)) {
             $image->fit(
@@ -122,10 +139,11 @@ class DocumentTransformer implements ITransformer
             );
         }
 
+        // Stora a cropped version
         $image->save($destination);
 
-        $transformation = new Transformation;
-
+        // Build the transformation
+        $transformation            = new Transformation;
         $transformation->name      = 'thumb';
         $transformation->type      = $preview->type;
         $transformation->size      = Filesystem::size($destination);
@@ -135,10 +153,16 @@ class DocumentTransformer implements ITransformer
         $transformation->extension = $preview->extension;
         $transformation->completed = true;
 
-        Storage::disk($file->disk)->put(
-            "{$file->id}/{$transformation->name}.{$transformation->extension}",
-            fopen($destination, 'r+')
-        );
+        // Get the disk and a stream from the cropped image location
+        $stream = fopen($destination, 'r+');
+
+        // Upload the preview
+        $disk->put("{$file->id}/{$transformation->name}.{$transformation->extension}", $stream);
+
+        // Cleanup our streams
+        if (is_resource($stream)) {
+            fclose($stream);
+        }
 
         return $transformation;
     }

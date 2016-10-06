@@ -155,7 +155,7 @@ class File extends Model
      *
      * @return string
      */
-    public function getLocalPath($destination = null)
+    public function getLocalPath()
     {
         if (empty($this->localPath)) {
             $temp = get_temp_path();
@@ -191,6 +191,7 @@ class File extends Model
     {
         if (!empty($transformation)) {
             $transformationName = $transformation;
+
             /** @var \CipeMotion\Medialibrary\Entities\Transformation|null $transformation */
             $transformation = $this->transformations->where('name', $transformation)->where('completed', 1)->first();
 
@@ -315,9 +316,9 @@ class File extends Model
             && is_null($this->getPreviewFullAttribute())
         ) {
             $transformationName = $this->type === FileTypes::TYPE_IMAGE ? 'thumb' : 'preview';
-            $translation        = $this->transformations->where('name', $transformationName)->first();
+            $transformation     = $this->transformations->where('name', $transformationName)->first();
 
-            if (!is_null($translation) && !$translation->isCompleted) {
+            if (!is_null($transformation) && !$transformation->isCompleted) {
                 return true;
             }
         }

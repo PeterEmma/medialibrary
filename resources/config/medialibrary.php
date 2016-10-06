@@ -8,11 +8,11 @@ return [
     |--------------------------------------------------------------------------
     */
 
-    'disk'      => 'media',
+    'disk' => 'media',
 
     'generator' => [
 
-        'url' => CipeMotion\Medialibrary\Generators\AzureUrlGenerator::class
+        'url' => CipeMotion\Medialibrary\Generators\AzureUrlGenerator::class,
 
     ],
 
@@ -24,21 +24,21 @@ return [
 
     'relations' => [
 
-        'owner'      => [
+        'owner' => [
 
-            'model'    => 'App\User',
+            'model' => 'App\User',
 
             'resolver' => function () {
                 return auth()->user();
-            }
+            },
 
         ],
 
-        'user'       => [
+        'user' => [
 
-            'model'    => null,
+            'model' => null,
 
-            'resolver' => null
+            'resolver' => null,
 
         ],
 
@@ -82,14 +82,14 @@ return [
 
     'file_types' => [
 
-        'image'    => [
+        'image' => [
 
-            'mimes'           => [
+            'mimes' => [
 
                 'gif'  => 'image/gif',
                 'png'  => 'image/png',
                 'jpg'  => 'image/jpeg',
-                'jpeg' => 'image/jpeg'
+                'jpeg' => 'image/jpeg',
 
             ],
 
@@ -97,34 +97,34 @@ return [
 
                 'default' => [
 
-                    'default'
+                    'default',
 
-                ]
+                ],
 
             ],
 
-            'thumb'   => [
+            'thumb' => [
 
                 'transformer' => CipeMotion\Medialibrary\Transformers\ResizeTransformer::class,
 
-                'queued'      => false,
+                'queued' => false,
 
-                'config'      => [
+                'config' => [
 
-                    'size'  => [
+                    'size' => [
 
                         'w' => 280,
-                        'h' => 280
+                        'h' => 280,
 
                     ],
 
-                    'fit'    => true,
+                    'fit' => true,
 
                     'aspect' => true,
 
-                    'upsize' => true
+                    'upsize' => true,
 
-                ]
+                ],
 
             ],
 
@@ -134,41 +134,41 @@ return [
 
                     'transformer' => CipeMotion\Medialibrary\Transformers\ResizeTransformer::class,
 
-                    'queued'      => true,
+                    'queued' => true,
 
-                    'config'      => [
+                    'config' => [
 
-                        'size'    => [
+                        'size' => [
 
-                            'w' => 900
+                            'w' => 900,
 
                         ],
 
-                        'aspect'  => true,
+                        'aspect' => true,
 
-                        'upsize'  => false,
+                        'upsize' => false,
 
-                        'default' => true
+                        'default' => true,
 
-                    ]
+                    ],
 
-                ]
+                ],
 
             ],
 
-            'max_file_size'   => 10 * 1024 * 1024
+            'max_file_size' => 10 * 1024 * 1024,
 
         ],
 
-        'video'    => [
+        'video' => [
 
-            'mimes'           => [
+            'mimes' => [
 
                 'avi'   => [
 
                     'video/avi',
                     'video/msvideo',
-                    'video/x-msvideo'
+                    'video/x-msvideo',
 
                 ],
                 'mpeg'  => 'video/mpeg',
@@ -176,7 +176,7 @@ return [
                 'mp4'   => [
 
                     'video/mp4v-es',
-                    'video/mp4'
+                    'video/mp4',
 
                 ],
                 'mov'   => 'video/quicktime',
@@ -187,28 +187,82 @@ return [
                 'ogg'   => [
 
                     'video/ogg',
-                    'application/ogg'
+                    'application/ogg',
 
                 ],
-                'ogv'   => 'video/ogg'
 
             ],
+
+            'wait_for_default_transformation' => true,
 
             'transformationGroups' => [
 
-                'default' => []
+                'default' => [],
 
             ],
 
-            'transformations' => [],
+            'transformations' => [
 
-            'max_file_size'   => 500 * 1024 * 1024
+                'default' => [
+
+                    'transformer' => CipeMotion\Medialibrary\Transformers\VideoTransformer::class,
+
+                    'queued' => true,
+
+                    'config' => [
+
+                        'thumb' => [
+
+                            'size' => [
+
+                                'w' => 500,
+                                'h' => 500,
+
+                            ],
+
+                            'fit' => true,
+
+                        ],
+
+                        'preview' => [
+
+                            'size' => [
+
+                                'w' => 1280,
+                                'h' => 720,
+
+                            ],
+
+                        ],
+
+                        'video' => [
+
+                            'codec'      => 'h264',
+                            'resolution' => '1280x720',
+
+                        ],
+
+                        'audio' => [
+
+                            'codec' => 'aac',
+
+                        ],
+
+                        'default' => true,
+
+                    ],
+
+                ],
+
+            ],
+
+            'max_file_size' => 256 * 1024 * 1024,
 
         ],
 
         'document' => [
 
-            'mimes'           => [
+            'mimes' => [
 
                 'pdf'  => [
 
@@ -220,7 +274,7 @@ return [
                     'text/x-pdf',
                     'application/download',
                     'application/x-download',
-                    'application/save-as'
+                    'application/save-as',
 
                 ],
                 'doc'  => 'application/msword',
@@ -230,19 +284,19 @@ return [
                 'pot'  => [
 
                     'application/mspowerpoint',
-                    'application/vnd.ms-powerpoint'
+                    'application/vnd.ms-powerpoint',
 
                 ],
                 'ppa'  => [
 
                     'application/mspowerpoint',
-                    'application/vnd.ms-powerpoint'
+                    'application/vnd.ms-powerpoint',
 
                 ],
                 'pps'  => [
 
                     'application/mspowerpoint',
-                    'application/vnd.ms-powerpoint'
+                    'application/vnd.ms-powerpoint',
 
                 ],
                 'pws'  => 'application/vnd.ms-powerpoint',
@@ -260,25 +314,25 @@ return [
                 'xls'  => 'application/vnd.ms-excel',
                 'xlt'  => 'application/vnd.ms-excel',
                 'xla'  => 'application/vnd.ms-excel',
-                'xlsx' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+                'xlsx' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
             ],
 
-            'thumb'   => [
+            'thumb' => [
 
                 'transformer' => CipeMotion\Medialibrary\Transformers\DocumentTransformer::class,
 
-                'queued'      => true,
+                'queued' => true,
 
-                'config'      => [
+                'config' => [
 
-                    'size'  => [
+                    'size' => [
 
                         'w' => 280,
-                        'h' => 280
+                        'h' => 280,
 
                     ],
 
-                    'fit'    => true,
+                    'fit' => true,
 
                     //'aspect' => true,
 
@@ -288,61 +342,61 @@ return [
 
                 'defaults' => [
                     'thumb'   => null, // File url
-                    'preview' => null
+                    'preview' => null,
                 ],
 
             ],
 
             'transformationGroups' => [
 
-                'default' => []
+                'default' => [],
 
             ],
 
             'transformations' => [],
 
-            'max_file_size'   => 10 * 1024 * 1024
+            'max_file_size' => 10 * 1024 * 1024,
 
         ],
 
-        'audio'   => [
+        'audio' => [
 
-            'mimes'           => [
+            'mimes' => [
 
                 'mp3' => [
 
                     'audio/mpeg3',
-                    'audio/x-mpeg-3'
+                    'audio/x-mpeg-3',
 
                 ],
                 'wav' => [
 
                     'audio/wav',
-                    'audio/x-wav'
+                    'audio/x-wav',
 
                 ],
                 'ogg' => 'application/ogg',
                 'm4a' => [
 
                     'audio/mp4',
-                    'audio/x-m4a'
+                    'audio/x-m4a',
 
-                ]
+                ],
 
             ],
 
             'transformationGroups' => [
 
-                'default' => []
+                'default' => [],
 
             ],
 
             'transformations' => [],
 
-            'max_file_size'   => 50 * 1024 * 1024
+            'max_file_size' => 50 * 1024 * 1024,
 
-        ]
+        ],
 
-    ]
+    ],
 
 ];
