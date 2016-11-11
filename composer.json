@@ -21,7 +21,7 @@
         "illuminate/support": "^5.3",
         "illuminate/database": "^5.3",
         "danielstjules/stringy": "^2.3",
-        "jorisvanw/cloudconvert-php": "^3.0"
+        "cloudconvert/cloudconvert-php": "^2.2"
     },
     "require-dev": {
         "aws/aws-sdk-php": "^3.19"
