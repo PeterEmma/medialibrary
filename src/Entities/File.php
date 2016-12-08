@@ -2,6 +2,7 @@
 
 namespace CipeMotion\Medialibrary\Entities;
 
+use Exception;
 use Stringy\Stringy;
 use Ramsey\Uuid\Uuid;
 use Intervention\Image\Facades\Image;
@@ -148,6 +149,46 @@ class File extends Model
         } else {
             $query->where('group', $group);
         }
+    }
+
+    /**
+     * Scope the query to files with owner.
+     *
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     */
+    public function scopeWithOwner(Builder $query)
+    {
+        $query->whereNotNull('owner_id');
+    }
+
+    /**
+     * Scope the query to files without owner.
+     *
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     */
+    public function scopeWithoutOwner(Builder $query)
+    {
+        $query->whereNull('owner_id');
+    }
+
+    /**
+     * Scope the query to files with user.
+     *
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     */
+    public function scopeWithUser(Builder $query)
+    {
+        $query->whereNotNull('user_id');
+    }
+
+    /**
+     * Scope the query to files without user.
+     *
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     */
+    public function scopeWithoutUser(Builder $query)
+    {
+        $query->whereNull('user_id');
     }
 
     /**
@@ -363,7 +404,25 @@ class File extends Model
      */
     public function owner()
     {
+        if (is_null(config('medialibrary.relations.owner.model'))) {
+            throw new Exception('Medialibrary: owner relation is not set in medialibrary.php');
+        }
+
         return $this->belongsTo(config('medialibrary.relations.owner.model'));
+    }
+
+    /**
+     * The file user.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function user()
+    {
+        if (is_null(config('medialibrary.relations.users.model'))) {
+            throw new Exception('Medialibrary: user relation is not set in medialibrary.php');
+        }
+
+        return $this->belongsTo(config('medialibrary.relations.users.model'));
     }
 
     /**
