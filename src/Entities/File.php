@@ -462,7 +462,7 @@ class File extends Model
         $file = new File;
 
         // Retrieve the disk from the config unless it's given to us
-        $disk = (is_null($disk)) ? config('medialibrary.disk') : $disk;
+        $disk = (is_null($disk)) ? value(config('medialibrary.disk')) : $disk;
 
         /** @var \Illuminate\Database\Eloquent\Model $owner */
         $owner = call_user_func(config('medialibrary.relations.owner.resolver'));
