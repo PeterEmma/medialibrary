@@ -528,7 +528,7 @@ class File extends Model
 
         // Generate a file id and resolve the owner
         $file->id       = Uuid::uuid4()->toString();
-        $file->owner_id = $owner->getKey();
+        $file->owner_id = (is_null($owner)) ? null : $owner->getKey();
 
         // Check if we need to resolve a user to attach this file to
         if (!is_null(config('medialibrary.relations.user.model'))) {
@@ -536,7 +536,7 @@ class File extends Model
             $user = call_user_func(config('medialibrary.relations.user.resolver'));
 
             // Attach the user
-            $file->user_id = $user->getKey();
+            $file->user_id = (is_null($user)) ? null : $user->getKey();
         }
 
         // If a group is given, set it
