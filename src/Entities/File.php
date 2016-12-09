@@ -418,11 +418,11 @@ class File extends Model
      */
     public function user()
     {
-        if (is_null(config('medialibrary.relations.users.model'))) {
+        if (is_null(config('medialibrary.relations.user.model'))) {
             throw new Exception('Medialibrary: user relation is not set in medialibrary.php');
         }
 
-        return $this->belongsTo(config('medialibrary.relations.users.model'));
+        return $this->belongsTo(config('medialibrary.relations.user.model'));
     }
 
     /**
