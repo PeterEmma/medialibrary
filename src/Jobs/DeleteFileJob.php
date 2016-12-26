@@ -6,6 +6,7 @@ use Storage;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use CipeMotion\Medialibrary\Entities\Attachable;
 
 class DeleteFileJob extends Job implements ShouldQueue
 {
@@ -42,6 +43,8 @@ class DeleteFileJob extends Job implements ShouldQueue
      */
     public function handle()
     {
+        Attachable::forFile($this->id)->delete();
+
         Storage::disk($this->disk)->deleteDirectory($this->id);
     }
 }
