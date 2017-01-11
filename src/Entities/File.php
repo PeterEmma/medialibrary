@@ -401,6 +401,7 @@ class File extends Model
      * The file owner.
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     * @throws \Exception
      */
     public function owner()
     {
@@ -415,6 +416,7 @@ class File extends Model
      * The file user.
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     * @throws \Exception
      */
     public function user()
     {
@@ -507,47 +509,70 @@ class File extends Model
     }
 
     /**
+     * Find the type for the mime type.
+     *
+     * @param string $mime
+     *
+     * @return string|null
+     */
+    public static function getTypeForMime($mime)
+    {
+        $types = config('medialibrary.file_types');
+
+        foreach ($types as $type => $data) {
+            $allowed = array_flatten(array_values(array_get($data, 'mimes')));
+
+            if (in_array($mime, $allowed)) {
+                return $type;
+            }
+        }
+
+        return null;
+    }
+
+    /**
      * File upload helper.
      *
      * @param \Symfony\Component\HttpFoundation\File\UploadedFile $upload
      * @param array                                               $attributes
      * @param string|null                                         $disk
+     * @param bool|\Illuminate\Database\Eloquent\Model            $owner
+     * @param bool|\Illuminate\Database\Eloquent\Model            $user
      *
      * @return bool|\CipeMotion\Medialibrary\Entities\File
      */
-    public static function uploadFile(UploadedFile $upload, array $attributes = [], $disk = null)
-    {
-        // Start our journey with a fresh file Eloquent model
-        $file = new File;
+    public static function uploadFile(
+        UploadedFile $upload,
+        array $attributes = [],
+        $disk = null,
+        $owner = false,
+        $user = false
+    ) {
+        // Start our journey with a fresh file Eloquent model and a fresh UUID
+        $file     = new File;
+        $file->id = Uuid::uuid4()->toString();
 
         // Retrieve the disk from the config unless it's given to us
         $disk = (is_null($disk)) ? value(config('medialibrary.disk')) : $disk;
 
-        /** @var \Illuminate\Database\Eloquent\Model $owner */
-        $owner = call_user_func(config('medialibrary.relations.owner.resolver'));
+        // Check if we need to resolve the owner
+        if (!is_null(config('medialibrary.relations.owner.model')) && $owner === false) {
+            $owner = call_user_func(config('medialibrary.relations.owner.resolver'));
+        }
 
-        // Generate a file id and resolve the owner
-        $file->id       = Uuid::uuid4()->toString();
-        $file->owner_id = (is_null($owner)) ? null : $owner->getKey();
-
-        // Check if we need to resolve a user to attach this file to
-        if (!is_null(config('medialibrary.relations.user.model'))) {
-            /** @var \Illuminate\Database\Eloquent\Model $user */
+        // Check if we need to resolve the user
+        if (!is_null(config('medialibrary.relations.user.model')) && $user === false) {
             $user = call_user_func(config('medialibrary.relations.user.resolver'));
-
-            // Attach the user
-            $file->user_id = (is_null($user)) ? null : $user->getKey();
         }
 
-        // If a group is given, set it
-        if (!empty(array_has($attributes, 'group'))) {
-            $file->group = array_get($attributes, 'group');
-        }
+        // Attach the owner & user if supplied
+        $file->owner_id = (is_null($owner) || $owner === false) ? null : $owner->getKey();
+        $file->user_id  = (is_null($user) || $user === false) ? null : $user->getKey();
 
-        // If a category is given, set it
-        if (array_get($attributes, 'category', 0) > 0) {
-            $file->category_id = array_get($attributes, 'category');
-        }
+        // Fill in the fields from the attributes
+        $file->group = (!empty($group = array_get($attributes, 'group'))) ? $group : null;
+        $file->caption = (!empty($caption = array_get($attributes, 'caption'))) ? $caption : null;
+        $file->category_id = (array_get($attributes, 'category', 0) > 0) ? array_get($attributes, 'category') : null;
 
         // If a filename is set use that, otherwise build a filename based on the original name
         if (!empty($name = array_get($attributes, 'name'))) {
@@ -556,23 +581,15 @@ class File extends Model
             $file->name = str_replace(".{$upload->getClientOriginalExtension()}", '', $upload->getClientOriginalName());
         }
 
-        // If a caption was set include it
-        if (!empty($caption = array_get($attributes, 'caption'))) {
-            $file->caption = $caption;
-        }
-
         // Extract the type from the mime of the file
         $type = self::getTypeForMime($upload->getMimeType());
 
-        // If the file is a image we also need to find out how big the image is
+        // If the file is a image we also need to find out the dimensions
         if ($type === FileTypes::TYPE_IMAGE) {
             $image = Image::make($upload);
 
             $file->width  = $image->getWidth();
             $file->height = $image->getHeight();
-        } else {
-            $file->width  = null;
-            $file->height = null;
         }
 
         // Collect all the metadata we are going to save with the file entry in the database
@@ -607,27 +624,5 @@ class File extends Model
 
         // Something went wrong and the file is not uploaded
         return false;
-    }
-
-    /**
-     * Find the type for the mime type.
-     *
-     * @param string $mime
-     *
-     * @return string|null
-     */
-    public static function getTypeForMime($mime)
-    {
-        $types = config('medialibrary.file_types');
-
-        foreach ($types as $type => $data) {
-            $allowed = array_flatten(array_values(array_get($data, 'mimes')));
-
-            if (in_array($mime, $allowed)) {
-                return $type;
-            }
-        }
-
-        return null;
     }
 }
