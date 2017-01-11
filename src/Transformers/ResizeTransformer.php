@@ -50,6 +50,7 @@ class ResizeTransformer implements ITransformer
         $destination = get_temp_path();
 
         // Get a Image instance from the file
+        /** @var \Intervention\Image\Image $image */
         $image = Image::make($file->getLocalPath($destination));
 
         // Resize either with the fit strategy or just force the resize to the size
@@ -92,6 +93,9 @@ class ResizeTransformer implements ITransformer
         $transformation->mime_type = $file->mime_type;
         $transformation->extension = $file->extension;
         $transformation->completed = true;
+
+        // Cleanup the image
+        $image->destroy();
 
         // Get the disk and a stream from the cropped image location
         $disk   = Storage::disk($file->disk);

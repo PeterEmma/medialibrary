@@ -210,6 +210,7 @@ class VideoTransformer implements ITransformer
         }
 
         // Create a image instance so we can detect the width and height
+        /** @var \Intervention\Image\Image $image */
         $image = Image::make($destination);
 
         // Build the preview
@@ -264,6 +265,9 @@ class VideoTransformer implements ITransformer
         $thumb->height    = $image->height();
         $thumb->extension = 'jpg';
         $thumb->completed = true;
+
+        // Cleanup the image
+        $image->destroy();
 
         // Get the disk and a stream from the cropped image location
         $stream = fopen($destination, 'r+');
