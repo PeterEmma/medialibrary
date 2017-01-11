@@ -398,6 +398,20 @@ class File extends Model
     }
 
     /**
+     * Set the group attribute.
+     *
+     * @param string $value
+     */
+    public function setGroupAttribute($value)
+    {
+        if (empty($value)) {
+            $value = 'default';
+        }
+
+        $this->attributes['group'] = $value;
+    }
+
+    /**
      * The file owner.
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
@@ -570,8 +584,8 @@ class File extends Model
         $file->user_id  = (is_null($user) || $user === false) ? null : $user->getKey();
 
         // Fill in the fields from the attributes
-        $file->group = (!empty($group = array_get($attributes, 'group'))) ? $group : null;
-        $file->caption = (!empty($caption = array_get($attributes, 'caption'))) ? $caption : null;
+        $file->group       = (!empty($group = array_get($attributes, 'group'))) ? $group : null;
+        $file->caption     = (!empty($caption = array_get($attributes, 'caption'))) ? $caption : null;
         $file->category_id = (array_get($attributes, 'category', 0) > 0) ? array_get($attributes, 'category') : null;
 
         // If a filename is set use that, otherwise build a filename based on the original name
