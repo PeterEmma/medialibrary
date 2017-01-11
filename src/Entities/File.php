@@ -600,10 +600,13 @@ class File extends Model
 
         // If the file is a image we also need to find out the dimensions
         if ($type === FileTypes::TYPE_IMAGE) {
+            /** @var \Intervention\Image\Image $image */
             $image = Image::make($upload);
 
             $file->width  = $image->getWidth();
             $file->height = $image->getHeight();
+
+            $image->destroy();
         }
 
         // Collect all the metadata we are going to save with the file entry in the database

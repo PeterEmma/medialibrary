@@ -96,6 +96,7 @@ class DocumentTransformer implements ITransformer
         }
 
         // Create a Image
+        /** @var \Intervention\Image\Image $image */
         $image = Image::make($destination);
 
         // Build the transformation
@@ -152,6 +153,9 @@ class DocumentTransformer implements ITransformer
         $transformation->mime_type = $preview->mime_type;
         $transformation->extension = $preview->extension;
         $transformation->completed = true;
+
+        // Cleanup the image
+        $image->destroy();
 
         // Get the disk and a stream from the cropped image location
         $stream = fopen($destination, 'r+');
