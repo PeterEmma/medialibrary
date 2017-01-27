@@ -56,7 +56,7 @@ abstract class TransformFileJob extends Job
     public function handle()
     {
         /** @var \CipeMotion\Medialibrary\Transformers\ITransformer $transformer */
-        $transformer = app($this->transformer, [$this->name, $this->config]);
+        $transformer = new $this->transformer($this->name, $this->config);
 
         if ($transformer instanceof ITransformer) {
             $transformation = $transformer->transform($this->file);
