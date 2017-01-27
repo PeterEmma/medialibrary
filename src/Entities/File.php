@@ -479,7 +479,9 @@ class File extends Model
     protected function getUrlGenerator()
     {
         if (is_null($this->generator)) {
-            $this->generator = app(config('medialibrary.generator.url'), [config("filesystems.disks.{$this->disk}")]);
+            $generatorClass = config('medialibrary.generator.url');
+
+            $this->generator = new $generatorClass(config("filesystems.disks.{$this->disk}"));
         }
 
         return $this->generator;
