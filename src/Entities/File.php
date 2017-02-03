@@ -569,7 +569,7 @@ class File extends Model
         $file->id = Uuid::uuid4()->toString();
 
         // Retrieve the disk from the config unless it's given to us
-        $disk = (is_null($disk)) ? value(config('medialibrary.disk')) : $disk;
+        $disk = (is_null($disk)) ? call_user_func(config('medialibrary.disk')) : $disk;
 
         // Check if we need to resolve the owner
         if (!is_null(config('medialibrary.relations.owner.model')) && $owner === false) {
