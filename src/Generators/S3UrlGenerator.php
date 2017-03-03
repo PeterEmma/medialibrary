@@ -29,7 +29,7 @@ class S3UrlGenerator implements IUrlGenerator
      * Get a URL to the resource.
      *
      * @param \CipeMotion\Medialibrary\Entities\File                $file
-     * @param \CipeMotion\Medialibrary\Entities\Transformation|null $tranformation
+     * @param \CipeMotion\Medialibrary\Entities\Transformation|null $transformation
      * @param bool                                                  $fullPreview
      * @param bool                                                  $download
      *
@@ -38,7 +38,7 @@ class S3UrlGenerator implements IUrlGenerator
      */
     public function getUrlForTransformation(
         File $file,
-        Transformation $tranformation = null,
+        Transformation $transformation = null,
         $fullPreview = false,
         $download = false
     ) {
@@ -51,7 +51,7 @@ class S3UrlGenerator implements IUrlGenerator
         $region = array_get($this->config, 'region');
         $bucket = array_get($this->config, 'bucket');
 
-        if (empty($tranformation)) {
+        if (empty($transformation)) {
             $tranformationName = 'upload';
             $extension         = $file->extension;
 
@@ -60,8 +60,8 @@ class S3UrlGenerator implements IUrlGenerator
                 $extension         = 'jpg';
             }
         } else {
-            $tranformationName = $tranformation->name;
-            $extension         = $tranformation->extension;
+            $tranformationName = $transformation->name;
+            $extension         = $transformation->extension;
         }
 
         return "https://s3.{$region}.amazonaws.com/{$bucket}/{$file->id}/{$tranformationName}.{$extension}";

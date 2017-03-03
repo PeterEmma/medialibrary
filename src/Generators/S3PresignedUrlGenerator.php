@@ -46,7 +46,7 @@ class S3PresignedUrlGenerator implements IUrlGenerator
      * Get a URL to the resource.
      *
      * @param \CipeMotion\Medialibrary\Entities\File                $file
-     * @param \CipeMotion\Medialibrary\Entities\Transformation|null $tranformation
+     * @param \CipeMotion\Medialibrary\Entities\Transformation|null $transformation
      * @param bool                                                  $fullPreview
      * @param bool                                                  $download
      *
@@ -54,32 +54,34 @@ class S3PresignedUrlGenerator implements IUrlGenerator
      */
     public function getUrlForTransformation(
         File $file,
-        Transformation $tranformation = null,
+        Transformation $transformation = null,
         $fullPreview = false,
         $download = false
     ) {
-        if (empty($tranformation)) {
+        if (empty($transformation)) {
             $tranformationName = 'upload';
             $extension         = $file->extension;
+            $mime              = $file->mime;
 
             if ($fullPreview && $file->type !== FileTypes::TYPE_IMAGE) {
                 $tranformationName = 'preview';
                 $extension         = 'jpg';
             }
         } else {
-            $tranformationName = $tranformation->name;
-            $extension         = $tranformation->extension;
+            $tranformationName = $transformation->name;
+            $extension         = $transformation->extension;
+            $mime              = $transformation->mime;
         }
 
         $commandParams = [
             'ResponseCacheControl' => 'private, max-age=1200',
-            'ResponseContentType'  => $file->mime_type,
+            'ResponseContentType'  => $mime,
             'Bucket'               => array_get($this->config, 'bucket'),
             'Key'                  => "{$file->id}/{$tranformationName}.{$extension}",
         ];
 
         if ($download) {
-            $commandParams['ResponseContentDisposition'] = "attachment; filename={$file->filename}";
+            $commandParams['ResponseContentDisposition'] = "attachment; filename={$file->filename}-{$tranformationName}.{$extension}";
         }
 
         $expires = array_get($this->config, 'presigned.expires', '+20 minutes');

@@ -6,8 +6,10 @@ use Image;
 use Storage;
 use CloudConvert\Api;
 use File as Filesystem;
+use CloudConvert\Exceptions\ApiException;
 use CipeMotion\Medialibrary\Entities\File;
 use CipeMotion\Medialibrary\Entities\Transformation;
+use CloudConvert\Exceptions\ApiConversionFailedException;
 
 class DocumentTransformer implements ITransformer
 {
@@ -71,21 +73,41 @@ class DocumentTransformer implements ITransformer
             $cloudconvertSettings['timeout'] = config('services.cloudconvert.timeout');
         }
 
-        // Run the conversion
-        $convert = $this->api->convert($cloudconvertSettings)->wait();
+        $convert     = null;
+        $destination = null;
 
-        // Get a temp path
-        $destination = get_temp_path();
+        try {
+            // Wait for the conversion to finish
+            $convert = $this->api->convert($cloudconvertSettings)->wait();
 
-        // Download the converted video file
-        copy('https:' . $convert->output->url, $destination);
+            // Get a temp path
+            $destination = get_temp_path();
+
+            // Download the converted video file
+            copy('https:' . $convert->output->url, $destination);
+        } catch (ApiConversionFailedException $e) {
+            // So if we could not convert the file we ingore this transformation
+            // The file is probably corrupt or unsupported or has some other shenanigans
+            // The other exceptions are retryable so we fail and try again later
+        }
 
         // We got it all, cleanup!
-        $convert->delete();
+        if ($convert !== null) {
+            try {
+                $convert->delete();
+            } catch (ApiException $e) {
+                // If we could not delete, meh, it's probably already gone then
+            }
+        }
+
+        // If we have no destination something went wrong and we abort here
+        if ($destination === null) {
+            return null;
+        }
 
         // Get the disk and a stream from the cropped image location
         $disk   = Storage::disk($file->disk);
-        $stream = fopen($destination, 'r+');
+        $stream = fopen($destination, 'rb+');
 
         // Upload the preview
         $disk->put("{$file->id}/preview.{$extension}", $stream);
@@ -158,7 +180,7 @@ class DocumentTransformer implements ITransformer
         $image->destroy();
 
         // Get the disk and a stream from the cropped image location
-        $stream = fopen($destination, 'r+');
+        $stream = fopen($destination, 'rb+');
 
         // Upload the preview
         $disk->put("{$file->id}/{$transformation->name}.{$transformation->extension}", $stream);

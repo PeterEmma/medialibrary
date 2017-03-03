@@ -29,7 +29,7 @@ class AzureUrlGenerator implements IUrlGenerator
      * Get a URL to the resource.
      *
      * @param \CipeMotion\Medialibrary\Entities\File                $file
-     * @param \CipeMotion\Medialibrary\Entities\Transformation|null $tranformation
+     * @param \CipeMotion\Medialibrary\Entities\Transformation|null $transformation
      * @param bool                                                  $fullPreview
      * @param bool                                                  $download
      *
@@ -38,7 +38,7 @@ class AzureUrlGenerator implements IUrlGenerator
      */
     public function getUrlForTransformation(
         File $file,
-        Transformation $tranformation = null,
+        Transformation $transformation = null,
         $fullPreview = false,
         $download = false
     ) {
@@ -51,19 +51,19 @@ class AzureUrlGenerator implements IUrlGenerator
         $account   = array_get($this->config, 'account');
         $container = array_get($this->config, 'container');
 
-        if (empty($tranformation)) {
-            $tranformation = 'upload';
-            $extension     = $file->extension;
+        if (empty($transformation)) {
+            $transformation = 'upload';
+            $extension      = $file->extension;
 
             if ($fullPreview && $file->type !== FileTypes::TYPE_IMAGE) {
-                $tranformation = 'preview';
-                $extension     = 'jpg';
+                $transformation = 'preview';
+                $extension      = 'jpg';
             }
         } else {
-            $tranformation = $tranformation->name;
-            $extension     = $tranformation->extension;
+            $transformation = $transformation->name;
+            $extension      = $transformation->extension;
         }
 
-        return "https://{$account}.blob.core.windows.net/{$container}/{$file->id}/{$tranformation}.{$extension}";
+        return "https://{$account}.blob.core.windows.net/{$container}/{$file->id}/{$transformation}.{$extension}";
     }
 }
