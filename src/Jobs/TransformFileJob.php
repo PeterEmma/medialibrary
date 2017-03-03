@@ -61,6 +61,11 @@ abstract class TransformFileJob extends Job
         if ($transformer instanceof ITransformer) {
             $transformation = $transformer->transform($this->file);
 
+            // Could not transform this document, skip the transformation
+            if ($transformation === null) {
+                return;
+            }
+
             if (array_get($this->config, 'default', false)) {
                 $this->file->size      = $transformation->raw_size;
                 $this->file->width     = $transformation->width;
