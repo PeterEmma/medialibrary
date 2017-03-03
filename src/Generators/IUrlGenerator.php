@@ -18,7 +18,7 @@ interface IUrlGenerator
      * Get a URL to the resource.
      *
      * @param \CipeMotion\Medialibrary\Entities\File                $file
-     * @param \CipeMotion\Medialibrary\Entities\Transformation|null $tranformation
+     * @param \CipeMotion\Medialibrary\Entities\Transformation|null $transformation
      * @param bool                                                  $fullPreview
      * @param bool                                                  $download
      *
@@ -26,7 +26,7 @@ interface IUrlGenerator
      */
     public function getUrlForTransformation(
         File $file,
-        Transformation $tranformation = null,
+        Transformation $transformation = null,
         $fullPreview = false,
         $download = false
     );
