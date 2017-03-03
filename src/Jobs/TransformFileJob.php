@@ -39,6 +39,7 @@ abstract class TransformFileJob extends Job
      * Create a transform job.
      *
      * @param \CipeMotion\Medialibrary\Entities\File $file
+     * @param string                                 $name
      * @param string                                 $transformer
      * @param array                                  $config
      */

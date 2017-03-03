@@ -14,7 +14,7 @@ if (!function_exists('filesize_to_human')) {
         $size   = ['B', 'kB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
         $factor = floor((strlen($bytes) - 1) / 3);
 
-        return sprintf("%.{$decimals}f", $bytes / pow(1024, $factor)) . @$size[$factor];
+        return sprintf("%.{$decimals}f", $bytes / (1024 ** $factor)) . @$size[$factor];
     }
 }
 

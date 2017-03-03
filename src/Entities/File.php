@@ -237,16 +237,14 @@ class File extends Model
             $transformation = $this->transformations->where('name', $transformation)->where('completed', 1)->first();
 
             if (is_null($transformation)) {
-                if (!is_null(config("medialibrary.file_types.{$this->type}.thumb.defaults.{$transformationName}"))
-                    && !empty(config("medialibrary.file_types.{$this->type}.thumb.defaults.{$transformationName}"))
-                ) {
+                if (!empty(config("medialibrary.file_types.{$this->type}.thumb.defaults.{$transformationName}"))) {
                     return config("medialibrary.file_types.{$this->type}.thumb.defaults.{$transformationName}");
                 } else {
                     return null;
                 }
             }
 
-            if (!is_null($transformation) && $transformation->completed == false) {
+            if (!is_null($transformation) && !$transformation->completed) {
                 $transformation = null;
             }
         }
@@ -464,7 +462,7 @@ class File extends Model
     /**
      * The models the file is attached to.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\MorphTo
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
     public function attachables()
     {
