@@ -108,8 +108,8 @@ class File extends Model
             return $this->morphedByMany($relations[$method], 'attachable', 'medialibrary_attachable');
         }
 
-        if (starts_with($method, 'getUrl') && ends_with($method, 'Attribute') && $method !== 'getUrlAttribute') {
-            return $this->getUrlAttribute(array_get($parameters, '0'));
+        if ($method !== 'getUrlAttribute' && starts_with($method, 'getUrl') && ends_with($method, 'Attribute')) {
+            return $this->getUrlAttribute();
         }
 
         return parent::__call($method, $parameters);
@@ -569,15 +569,15 @@ class File extends Model
         $file->id = Uuid::uuid4()->toString();
 
         // Retrieve the disk from the config unless it's given to us
-        $disk = (is_null($disk)) ? call_user_func(config('medialibrary.disk')) : $disk;
+        $disk = is_null($disk) ? call_user_func(config('medialibrary.disk')) : $disk;
 
         // Check if we need to resolve the owner
-        if (!is_null(config('medialibrary.relations.owner.model')) && $owner === false) {
+        if ($owner === false && !is_null(config('medialibrary.relations.owner.model'))) {
             $owner = call_user_func(config('medialibrary.relations.owner.resolver'));
         }
 
         // Check if we need to resolve the user
-        if (!is_null(config('medialibrary.relations.user.model')) && $user === false) {
+        if ($user === false && !is_null(config('medialibrary.relations.user.model'))) {
             $user = call_user_func(config('medialibrary.relations.user.resolver'));
         }
 
@@ -622,7 +622,7 @@ class File extends Model
         $file->completed = true;
 
         // Get a resource handle on the file so we can stream it to our disk
-        $stream = fopen($upload->getRealPath(), 'r+');
+        $stream = fopen($upload->getRealPath(), 'rb+');
 
         // Use Laravel' storage engine to store our file on a disk
         $success = Storage::disk($disk)->put("{$file->id}/upload.{$file->extension}", $stream);

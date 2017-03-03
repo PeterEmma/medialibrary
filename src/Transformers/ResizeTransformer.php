@@ -51,7 +51,7 @@ class ResizeTransformer implements ITransformer
 
         // Get a Image instance from the file
         /** @var \Intervention\Image\Image $image */
-        $image = Image::make($file->getLocalPath($destination));
+        $image = Image::make($file->getLocalPath());
 
         // Resize either with the fit strategy or just force the resize to the size
         if (array_get($this->config, 'fit', false)) {
@@ -99,7 +99,7 @@ class ResizeTransformer implements ITransformer
 
         // Get the disk and a stream from the cropped image location
         $disk   = Storage::disk($file->disk);
-        $stream = fopen($destination, 'r+');
+        $stream = fopen($destination, 'rb+');
 
         // Either overwrite the original uploaded file or write to the transformation path
         if (array_get($this->config, 'default', false)) {

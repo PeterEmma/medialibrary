@@ -85,7 +85,7 @@ class DocumentTransformer implements ITransformer
 
         // Get the disk and a stream from the cropped image location
         $disk   = Storage::disk($file->disk);
-        $stream = fopen($destination, 'r+');
+        $stream = fopen($destination, 'rb+');
 
         // Upload the preview
         $disk->put("{$file->id}/preview.{$extension}", $stream);
@@ -158,7 +158,7 @@ class DocumentTransformer implements ITransformer
         $image->destroy();
 
         // Get the disk and a stream from the cropped image location
-        $stream = fopen($destination, 'r+');
+        $stream = fopen($destination, 'rb+');
 
         // Upload the preview
         $disk->put("{$file->id}/{$transformation->name}.{$transformation->extension}", $stream);
