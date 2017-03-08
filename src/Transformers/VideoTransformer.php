@@ -134,7 +134,7 @@ class VideoTransformer implements ITransformer
 
         // Get the disk and a stream from the cropped image location
         $disk   = Storage::disk($file->disk);
-        $stream = fopen($destination, 'rb+');
+        $stream = fopen($destination, 'rb');
 
         // Either overwrite the original uploaded file or write to the transformation path
         if (array_get($this->config, 'default', false)) {
@@ -199,7 +199,7 @@ class VideoTransformer implements ITransformer
 
         // Get the disk and a stream from the cropped image location
         $disk   = Storage::disk($file->disk);
-        $stream = fopen($destination, 'rb+');
+        $stream = fopen($destination, 'rb');
 
         // Store the preview image
         $disk->put("{$file->id}/preview.jpg", $stream);
@@ -270,7 +270,7 @@ class VideoTransformer implements ITransformer
         $image->destroy();
 
         // Get the disk and a stream from the cropped image location
-        $stream = fopen($destination, 'rb+');
+        $stream = fopen($destination, 'rb');
 
         // Upload the preview
         $disk->put("{$file->id}/{$thumb->name}.{$thumb->extension}", $stream);

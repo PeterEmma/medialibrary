@@ -620,7 +620,7 @@ class File extends Model
         $file->completed = true;
 
         // Get a resource handle on the file so we can stream it to our disk
-        $stream = fopen($upload->getRealPath(), 'rb+');
+        $stream = fopen($upload->getRealPath(), 'rb');
 
         // Use Laravel' storage engine to store our file on a disk
         $success = Storage::disk($disk)->put("{$file->id}/upload.{$file->extension}", $stream);
