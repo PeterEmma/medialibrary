@@ -99,7 +99,7 @@ class ResizeTransformer implements ITransformer
 
         // Get the disk and a stream from the cropped image location
         $disk   = Storage::disk($file->disk);
-        $stream = fopen($destination, 'rb+');
+        $stream = fopen($destination, 'rb');
 
         // Either overwrite the original uploaded file or write to the transformation path
         if (array_get($this->config, 'default', false)) {
