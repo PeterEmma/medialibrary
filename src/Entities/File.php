@@ -199,11 +199,15 @@ class File extends Model
     public function getLocalPath()
     {
         if (empty($this->localPath)) {
-            $temp = get_temp_path();
+            if ($this->isDiskLocal($this->disk)) {
+                $this->localPath = config("filesystems.disks.{$this->disk}.root") . "/{$this->id}/upload.{$this->extension}";
+            } else {
+                $temp = get_temp_path();
 
-            copy($this->getDownloadUrlAttribute(), $temp);
+                copy($this->getDownloadUrlAttribute(), $temp);
 
-            $this->setLocalPath($temp);
+                $this->setLocalPath($temp);
+            }
         }
 
         return $this->localPath;
@@ -641,5 +645,15 @@ class File extends Model
 
         // Something went wrong and the file is not uploaded
         return false;
+    }
+
+    /**
+     * Check if the disk is stored locally.
+     *
+     * @return bool
+     */
+    private function isDiskLocal($disk)
+    {
+        return config("filesystems.disks.{$disk}.driver") === 'local';
     }
 }
