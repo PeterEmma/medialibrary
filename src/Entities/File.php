@@ -616,7 +616,9 @@ class File extends Model
         // Collect all the metadata we are going to save with the file entry in the database
         $file->type      = $type;
         $file->disk      = $disk;
-        $file->filename  = (string)Stringy::create($upload->getClientOriginalName())->toAscii()->trim()->toLowerCase()->slugify();
+        $file->filename  = (string)Stringy::create(
+            str_replace(".{$upload->getClientOriginalExtension()}", '', $upload->getClientOriginalName())
+        )->trim()->toLowerCase()->slugify();
         $file->extension = strtolower($upload->getClientOriginalExtension());
         $file->mime_type = $upload->getMimeType();
         $file->size      = $upload->getSize();

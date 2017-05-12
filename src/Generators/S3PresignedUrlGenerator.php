@@ -3,6 +3,7 @@
 namespace CipeMotion\Medialibrary\Generators;
 
 use Aws\S3\S3Client;
+use Stringy\Stringy;
 use CipeMotion\Medialibrary\FileTypes;
 use CipeMotion\Medialibrary\Entities\File;
 use CipeMotion\Medialibrary\Entities\Transformation;
@@ -81,7 +82,9 @@ class S3PresignedUrlGenerator implements IUrlGenerator
         ];
 
         if ($download) {
-            $commandParams['ResponseContentDisposition'] = "attachment; filename={$file->filename}-{$tranformationName}.{$extension}";
+            $filename = (string)Stringy::create($file->name)->slugify() . ".{$extension}";
+
+            $commandParams['ResponseContentDisposition'] = 'attachment; filename=' . $filename;
         }
 
         $expires = array_get($this->config, 'presigned.expires', '+20 minutes');
