@@ -156,11 +156,6 @@ class VideoTransformer implements ITransformer
             fclose($stream);
         }
 
-        // Cleanup our temp file
-        if (!is_null($destination)) {
-            @unlink($destination);
-        }
-
         return $transformation;
     }
 
@@ -283,11 +278,6 @@ class VideoTransformer implements ITransformer
         // Cleanup our streams
         if (is_resource($stream)) {
             fclose($stream);
-        }
-
-        // Cleanup our temp file
-        if (!is_null($destination)) {
-            @unlink($destination);
         }
 
         return [$preview, $thumb, $info];

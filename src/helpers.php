@@ -20,7 +20,7 @@ if (!function_exists('filesize_to_human')) {
 
 if (!function_exists('get_temp_path')) {
     /**
-     * Get a temporary file path.
+     * Get a temporary file path, deleted after the requests finishes.
      *
      * @param string $name
      *
