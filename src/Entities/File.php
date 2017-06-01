@@ -194,15 +194,23 @@ class File extends Model
     /**
      * Get the local path.
      *
+     * @param string|null $path
+     *
      * @return string
      */
-    public function getLocalPath()
+    public function getLocalPath($path = null)
     {
         if (empty($this->localPath)) {
             if ($this->isDiskLocal($this->disk)) {
-                $this->localPath = config("filesystems.disks.{$this->disk}.root") . "/{$this->id}/upload.{$this->extension}";
+                $localPath = config("filesystems.disks.{$this->disk}.root") . "/{$this->id}/upload.{$this->extension}";
+
+                if (!is_null($path)) {
+                    copy($localPath, $path);
+                }
+
+                $this->setLocalPath(is_null($path) ? $localPath : $path);
             } else {
-                $temp = get_temp_path();
+                $temp = is_null($path) ? get_temp_path() : $path;
 
                 copy($this->getDownloadUrlAttribute(), $temp);
 

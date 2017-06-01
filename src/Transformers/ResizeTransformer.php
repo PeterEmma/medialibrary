@@ -49,9 +49,12 @@ class ResizeTransformer implements ITransformer
         // Get a temp path to work with
         $destination = get_temp_path();
 
+        // Get a temp path to store the file we are transforming in
+        $localPath = get_temp_path();
+
         // Get a Image instance from the file
         /** @var \Intervention\Image\Image $image */
-        $image = Image::make($file->getLocalPath());
+        $image = Image::make($file->getLocalPath($localPath));
 
         // Resize either with the fit strategy or just force the resize to the size
         if (array_get($this->config, 'fit', false)) {
@@ -111,6 +114,18 @@ class ResizeTransformer implements ITransformer
         // Close the stream again
         if (is_resource($stream)) {
             fclose($stream);
+        }
+
+        // Cleanup our temp file
+        if (!is_null($destination)) {
+            @unlink($destination);
+        }
+
+        // Cleanup the local copy of the file
+        if (!is_null($localPath)) {
+            $file->setLocalPath(null);
+
+            @unlink($localPath);
         }
 
         // Return the transformation
