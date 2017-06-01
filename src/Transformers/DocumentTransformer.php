@@ -89,6 +89,9 @@ class DocumentTransformer implements ITransformer
             // So if we could not convert the file we ingore this transformation
             // The file is probably corrupt or unsupported or has some other shenanigans
             // The other exceptions are retryable so we fail and try again later
+            if (!is_null($destination)) {
+                @unlink($destination);
+            }
         }
 
         // We got it all, cleanup!
@@ -97,6 +100,9 @@ class DocumentTransformer implements ITransformer
                 $convert->delete();
             } catch (ApiException $e) {
                 // If we could not delete, meh, it's probably already gone then
+                if (!is_null($destination)) {
+                    @unlink($destination);
+                }
             }
         }
 
@@ -188,6 +194,11 @@ class DocumentTransformer implements ITransformer
         // Cleanup our streams
         if (is_resource($stream)) {
             fclose($stream);
+        }
+
+        // Cleanup our temp file
+        if (!is_null($destination)) {
+            @unlink($destination);
         }
 
         return $transformation;
